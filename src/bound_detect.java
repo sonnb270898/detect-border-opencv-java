@@ -37,6 +37,7 @@ public class bound_detect {
             result.put("contours", null);
             return result;
         }
+
         double maxVal = 0;
         int maxValIdx = 0;
         for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++)
@@ -67,20 +68,39 @@ public class bound_detect {
                     continue;
             flag = true;
         }
-        HighGui.imshow("diff", diff);
         return flag;
+    }
+
+    public static List<Point> orderPoint(List<Point> box) {
+        Collections.sort(box, new Comparator<Point>() {
+            @Override
+            public int compare(Point p1, Point p2) {
+                return Double.compare(p1.x, p2.x);
+            }
+        });
+        if (box.get(0).y > box.get(1).y){
+            Collections.swap(box,0,1);
+            Collections.swap(box,1,3);
+        }else{
+            Collections.swap(box,1,2);
+            Collections.swap(box,2,3);
+        }
+        return box;
+    }
+
+    public static Size estimateSize(List<Point> box) {
+        double width = Math.sqrt(Math.abs(Math.pow(box.get(0).x,2) - Math.pow(box.get(1).x,2)));
+        double height = Math.sqrt(Math.abs(Math.pow(box.get(0).y,2) - Math.pow(box.get(3).x,2)));
+        return new Size(width,height);
     }
 
     public static void main(String args[]) {
         //Loading the OpenCV core library
         System.loadLibrary( Core.NATIVE_LIBRARY_NAME);
 
-//        //Instantiating the Imagecodecs class
-//        Imgcodecs imageCodecs = new Imgcodecs();
-
         //Reading the Image from the video
         VideoCapture capture = new VideoCapture();
-        capture.open(2);
+        capture.open(0);
 
         Mat s_frame = new Mat();
         Mat frame = new Mat();
@@ -91,12 +111,11 @@ public class bound_detect {
 
         while (true)
         {
+            long start = System.currentTimeMillis();
             capture.read(frame);
-            if (!capture.grab()) {
-                System.exit(0);
-            }
 
             frame = resizeImage(frame, 640);
+
             //convert to gray image
             Mat gray_img = new Mat();
             Imgproc.cvtColor(frame, gray_img, Imgproc.COLOR_RGB2GRAY);
@@ -112,11 +131,17 @@ public class bound_detect {
             Imgproc.boxPoints(rotate_rect_boxes, rect_boxes);
 
             rect_boxes.convertTo(rect_boxes, CvType.CV_32S);
-            rect_boxes.fromList(rect_boxes.toList().subList(0,4));
+            // get order_point
+            List<Point> order_point = orderPoint(rect_boxes.toList().subList(0,4));
+            rect_boxes.fromList(order_point);
+            //estimate size
+            Size s = estimateSize(order_point);
+
             contours.add(rect_boxes);
             Imgproc.drawContours(frame, contours, 0, new Scalar(0,255,0), 2);
         }
             s_frame = gray_img.clone();
+            System.out.println(System.currentTimeMillis()-start);
             HighGui.imshow( "window Name", frame );
             int c = HighGui.waitKey( 1 );
             if (c == 27) {
