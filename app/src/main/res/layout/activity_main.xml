@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="#FFFFFF"
+	tools:ignore="MergeRootFrame">
+
+	<com.serenegiant.widget.UVCCameraTextureView
+		android:id="@+id/camera_view"
+		android:layout_width="20dp"
+		android:layout_height="16dp"
+		android:layout_centerInParent="true" />
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="vertical">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_weight="3"
+			android:orientation="horizontal">
+
+			<ImageView
+				android:id="@+id/imageView"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="2"
+				android:background="@drawable/border"
+				android:src="?attr/colorBackgroundFloating"
+				android:visibility="visible"
+				app:srcCompat="@color/BLACK" />
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="6"
+				android:orientation="vertical">
+
+				<TextView
+					android:layout_width="fill_parent"
+					android:layout_height="match_parent"
+					android:layout_gravity="center"
+					android:layout_weight="1"
+					android:background="@drawable/border"
+					android:gravity="center"
+					android:text="Chiều dài "
+
+					android:textColor="#262926"
+
+					android:textSize="18dp" />
+
+				<TextView
+					android:layout_width="fill_parent"
+					android:layout_height="match_parent"
+					android:layout_gravity="center"
+					android:layout_weight="1"
+					android:background="@drawable/border"
+					android:gravity="center"
+					android:text="Chiều rộng y "
+					android:textColor="#262926"
+
+
+					android:textSize="18dp" />
+
+				<TextView
+					android:layout_width="fill_parent"
+					android:layout_height="match_parent"
+					android:layout_gravity="center"
+					android:layout_weight="1"
+					android:background="@drawable/border"
+					android:gravity="center"
+					android:text="Chiều cao z "
+					android:textColor="#262926"
+
+					android:textSize="18dp" />
+			</LinearLayout>
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_weight="10"
+			android:orientation="horizontal">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="2"
+				android:orientation="horizontal"
+				android:visibility="visible">
+
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:layout_weight="1"
+					android:background="@drawable/border"
+					android:gravity="center"
+					android:text="Cấu hình cân "
+					android:textColor="#262926"
+
+					android:textSize="18dp" />
+
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:layout_weight="1"
+					android:background="@drawable/border"
+					android:gravity="center"
+					android:text="Cấu hình chiều cao "
+					android:textColor="#262926"
+
+					android:textSize="18dp" />
+
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:layout_weight="1"
+					android:background="@drawable/border"
+					android:gravity="center"
+					android:text="Cấu hình camera  "
+					android:textColor="#262926"
+
+					android:textSize="18dp" />
+			</LinearLayout>
+
+			<FrameLayout
+				android:id="@+id/pip_video_view"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="6"
+				android:background="@drawable/border">
+
+				<LinearLayout
+					android:id="@+id/buttons_call_container"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:layout_gravity="bottom|center"
+					android:background="#FFFFFF"
+					android:orientation="horizontal">
+
+					<FrameLayout
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:layout_weight="1"
+						android:background="#FFFFFF">
+
+						<ImageButton
+							android:id="@+id/button_call_disconnect"
+							android:layout_width="64dp"
+							android:layout_height="64dp"
+							android:layout_gravity="center"
+							android:background="@android:drawable/ic_delete"
+							android:contentDescription="..." />
+					</FrameLayout>
+
+
+					<FrameLayout
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:layout_weight="1"
+						android:background="#FFFFFF">
+
+						<ImageButton
+							android:id="@+id/imageButton"
+							android:layout_width="64dp"
+							android:layout_height="64dp"
+							android:layout_gravity="center"
+							android:background="@mipmap/ic_transparent"
+							android:scaleType="fitCenter"
+							android:src="@drawable/btn_new_shutter" />
+
+					</FrameLayout>
+
+				</LinearLayout>
+			</FrameLayout>
+
+		</LinearLayout>
+
+	</LinearLayout>
+
+</FrameLayout>
