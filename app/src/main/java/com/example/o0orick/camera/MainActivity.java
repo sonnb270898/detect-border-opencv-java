@@ -1,6 +1,7 @@
 package com.example.o0orick.camera;
 
 import android.animation.Animator;
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
@@ -8,6 +9,7 @@ import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -66,7 +68,10 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
     private static final boolean DEBUG = true;	// TODO set false on release
     private static final String TAG = "MainActivity";
 
+    private Rect rectRoi = null;
+    private List<Integer> listPointInRoi = new ArrayList<>();
 
+    private boolean touchFlag = true;
 
     Mat startFrame=null;
 	private final Object mSync = new Object();
@@ -94,6 +99,7 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
     //for open&start / stop&close camera preview
     private ImageButton mCameraButton;
     private ImageButton disconnectButton;
+    private ImageButton selectRoiButton;
     private ImageView mImageView;
     private boolean isScaling = false;
     private boolean isInCapturing = false;
@@ -102,6 +108,8 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
     private int mCaptureWidth = capture_solution[0][0];
     private int mCaptureHeight = capture_solution[0][1];
 
+    private int heightImgView;
+    private int widthImgView;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -153,6 +161,48 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
                 finish();
             }
         });
+
+
+        // get Region of Interest
+        selectRoiButton = findViewById(R.id.selectRoi);
+        selectRoiButton.setOnClickListener(new OnClickListener() {
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public void onClick(View v) {
+            if (listPointInRoi.size() == 4){
+                listPointInRoi.clear();
+            }
+            if(widthImgView != 0){
+                    mImageView.setOnTouchListener(new View.OnTouchListener() {
+                        int startX, startY;
+                        float ratioImgWidth = heightImgView*640/480, imgBoundary = (widthImgView - ratioImgWidth)/2;
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                                startX = (int) ((event.getX() - imgBoundary)/ratioImgWidth*640);
+                                startY = (int) (event.getY()/heightImgView * 480);
+                                if(event.getX() >= imgBoundary && event.getX() <= (imgBoundary + ratioImgWidth)){
+                                    listPointInRoi.add(startX);
+                                    listPointInRoi.add(startY);
+                                }
+                            }
+
+                            if (listPointInRoi.size() == 4){
+                                rectRoi = new Rect(listPointInRoi.get(0), listPointInRoi.get(1),
+                                        Math.abs(listPointInRoi.get(2) - listPointInRoi.get(0)),
+                                        Math.abs(listPointInRoi.get(3) - listPointInRoi.get(1)));
+                                mImageView.setOnTouchListener(null);
+                                Log.w("xxxxxxx",String.format("%d,%d,%d,%d",rectRoi.x,rectRoi.y,rectRoi.width,rectRoi.height));
+                            }
+                            Log.w("xxxxx", listPointInRoi.toString());
+                            return false;
+                        }
+
+                    });
+                }
+            }
+        });
+
 
         synchronized (mSync) {
 	        mUSBMonitor = new USBMonitor(this, mOnDeviceConnectListener);
@@ -217,6 +267,8 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
         @Override
         public void onClick(final View view) {
             synchronized (mSync) {
+                heightImgView = mImageView.getHeight();
+                widthImgView = mImageView.getWidth();
                 if ((mCameraHandler != null) && !mCameraHandler.isOpened()) {
                     CameraDialog.showDialog(MainActivity.this);
                 } else {
@@ -231,9 +283,9 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
 			if (mCameraHandler != null) {
                 final SurfaceTexture st = mUVCCameraView.getSurfaceTexture();
 
-
 				mCameraHandler.setPreviewCallback(mIFrameCallback);
                 mCameraHandler.startPreview(new Surface(st));
+
 			}
 		}
         updateItems();
@@ -324,7 +376,7 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
     private int resetValue(final int flag) {
         return mCameraHandler != null ? mCameraHandler.resetValue(flag) : 0;
     }
-
+    //================================================================================
 
     private void updateItems() {
         runOnUiThread(mUpdateItemsOnUITask, 100);
@@ -365,7 +417,7 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
                     bitmap = Bitmap.createBitmap(mCaptureWidth, mCaptureHeight, Bitmap.Config.RGB_565);
                 }
 
-                        bitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.RGB_565);
+                bitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.RGB_565);
 
                 Mat currentFrame = new Mat();
                 Mat gray_img = new Mat();
@@ -376,10 +428,23 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
                 if (startFrame == null){
                     startFrame = gray_img.clone();
                 }
+                Map<String, Object> result;
+                boolean motionFlag;
+                if(rectRoi != null){
+                    int x = rectRoi.x;
+                    int y = rectRoi.y;
+                    int width = rectRoi.width;
+                    int height = rectRoi.height;
+                    Mat crop_gray_img = gray_img.submat(new Rect(x,y,width,height));
+                    Mat crop_startFrame = startFrame.submat(new Rect(x,y,width,height));
+                    result = detectObject(crop_gray_img, 0);
+                    motionFlag = detectMotion(crop_startFrame, crop_gray_img, 0);
+                }else{
+                    result = detectObject(gray_img, 2000);
+                    motionFlag = detectMotion(startFrame, gray_img, 1000);
+                }
 
-                Map<String, Object> result= detectObject(gray_img, 2000);
-
-                if ((boolean)result.get("has_Obj") && !detectMotion(startFrame, gray_img, 1000)) {
+                if ((boolean)result.get("has_Obj") && !motionFlag) {
 
                     RotatedRect rotate_rect_boxes = Imgproc.minAreaRect(new MatOfPoint2f(((MatOfPoint)result.get("contours")).toArray()));
 

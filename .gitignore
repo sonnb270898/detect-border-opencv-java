@@ -31,4 +31,4 @@ app/build/
 app/release/
 build/
 testkeystore.jks
-
+app/debug/

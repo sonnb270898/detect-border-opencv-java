@@ -41,16 +41,17 @@
 				android:orientation="vertical">
 
 				<TextView
+					android:id="@+id/chieudai"
 					android:layout_width="fill_parent"
 					android:layout_height="match_parent"
 					android:layout_gravity="center"
 					android:layout_weight="1"
 					android:background="@drawable/border"
 					android:gravity="center"
+
 					android:text="Chiều dài "
 
 					android:textColor="#262926"
-
 					android:textSize="18dp" />
 
 				<TextView
@@ -172,6 +173,22 @@
 							android:background="@mipmap/ic_transparent"
 							android:scaleType="fitCenter"
 							android:src="@drawable/btn_new_shutter" />
+
+					</FrameLayout>
+					<FrameLayout
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:layout_weight="1"
+						android:background="#FFFFFF">
+
+						<ImageButton
+							android:id="@+id/selectRoi"
+							android:layout_width="64dp"
+							android:layout_height="64dp"
+							android:layout_gravity="center"
+							android:background="@mipmap/ic_transparent"
+							android:scaleType="fitCenter"
+							android:src="?android:attr/galleryItemBackground" />
 
 					</FrameLayout>
 
