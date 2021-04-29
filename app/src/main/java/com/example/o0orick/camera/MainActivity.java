@@ -101,6 +101,12 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
     private ImageButton disconnectButton;
     private ImageButton selectRoiButton;
     private ImageView mImageView;
+    private ImageView mCropImageView;
+
+    private TextView objHeight;
+    private TextView objWidth;
+    private TextView objDepth;
+
     private boolean isScaling = false;
     private boolean isInCapturing = false;
 
@@ -110,6 +116,7 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
 
     private int heightImgView;
     private int widthImgView;
+    private static boolean cropImgFlag;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -144,6 +151,13 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
 
         mImageView = (ImageView)findViewById(R.id.imageView);
 
+        mCropImageView = (ImageView) findViewById(R.id.cropImageView);
+
+        //textView for size of object
+        objWidth = (TextView) findViewById(R.id.obj_width);
+        objHeight = (TextView) findViewById(R.id.obj_height);
+        objDepth = (TextView) findViewById(R.id.obj_depth);
+
         mCaptureWidth = capture_solution[0][0];
         mCaptureHeight = capture_solution[0][1];
         bitmap = Bitmap.createBitmap(mCaptureWidth, mCaptureHeight, Bitmap.Config.RGB_565);
@@ -169,8 +183,10 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
             @SuppressLint("ClickableViewAccessibility")
             @Override
             public void onClick(View v) {
-            if (listPointInRoi.size() == 4){
+            if (listPointInRoi.size() != 0){
                 listPointInRoi.clear();
+                rectRoi = null;
+                mCropImageView.setImageBitmap(null);
             }
             if(widthImgView != 0){
                     mImageView.setOnTouchListener(new View.OnTouchListener() {
@@ -193,6 +209,7 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
                                         Math.abs(listPointInRoi.get(3) - listPointInRoi.get(1)));
                                 mImageView.setOnTouchListener(null);
                                 Log.w("xxxxxxx",String.format("%d,%d,%d,%d",rectRoi.x,rectRoi.y,rectRoi.width,rectRoi.height));
+                                cropImgFlag = true;
                             }
                             Log.w("xxxxx", listPointInRoi.toString());
                             return false;
@@ -414,62 +431,66 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
                 WarnText = "";
 
                 if(bitmap.getWidth() != mCaptureWidth || bitmap.getHeight() != mCaptureHeight){
-                    bitmap = Bitmap.createBitmap(mCaptureWidth, mCaptureHeight, Bitmap.Config.RGB_565);
+                    bitmap = Bitmap.createBitmap(mCaptureWidth, mCaptureHeight, Bitmap.Config.ARGB_8888);
                 }
 
-                bitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.RGB_565);
+                bitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.ARGB_8888);
 
                 Mat currentFrame = new Mat();
-                Mat gray_img = new Mat();
+                Mat crop_gray_img = new Mat();
                 Utils.bitmapToMat(srcBitmap, currentFrame);
 
-                Imgproc.cvtColor(currentFrame, gray_img, Imgproc.COLOR_RGB2GRAY);
 
                 if (startFrame == null){
-                    startFrame = gray_img.clone();
+                    startFrame = crop_gray_img.clone();
                 }
                 Map<String, Object> result;
-                boolean motionFlag;
-                if(rectRoi != null){
-                    int x = rectRoi.x;
-                    int y = rectRoi.y;
-                    int width = rectRoi.width;
-                    int height = rectRoi.height;
-                    Mat crop_gray_img = gray_img.submat(new Rect(x,y,width,height));
-                    Mat crop_startFrame = startFrame.submat(new Rect(x,y,width,height));
-                    result = detectObject(crop_gray_img, 0);
-                    motionFlag = detectMotion(crop_startFrame, crop_gray_img, 0);
-                }else{
-                    result = detectObject(gray_img, 2000);
-                    motionFlag = detectMotion(startFrame, gray_img, 1000);
+                boolean motionFlag=false;
+                if(rectRoi != null) {
+
+                    Mat crop_currentFrame = currentFrame.submat(rectRoi);
+                    Imgproc.cvtColor(crop_currentFrame, crop_gray_img, Imgproc.COLOR_RGB2GRAY);
+
+                    if (cropImgFlag) {
+                        Bitmap bmp = Bitmap.createBitmap(crop_currentFrame.cols(), crop_currentFrame.rows(), Bitmap.Config.ARGB_8888);
+                        Utils.matToBitmap(crop_currentFrame, bmp);
+                        mCropImageView.setImageBitmap(bmp);
+                        cropImgFlag = false;
+                    }
+                    result = detectObject(crop_gray_img, 100);
+//                    motionFlag = detectMotion(crop_startFrame, crop_gray_img, 100);
+
+                    if ((boolean) result.get("has_Obj") && !motionFlag) {
+
+                        RotatedRect rotate_rect_boxes = Imgproc.minAreaRect(new MatOfPoint2f(((MatOfPoint) result.get("contours")).toArray()));
+
+                        MatOfPoint rect_boxes = new MatOfPoint();
+                        Imgproc.boxPoints(rotate_rect_boxes, rect_boxes);
+
+                        rect_boxes.convertTo(rect_boxes, CvType.CV_32S);
+                        // get order_point
+                        List<Point> order_point = orderPoint(rect_boxes.toList().subList(0, 4), rectRoi);
+                        rect_boxes.fromList(order_point);
+                        //estimate size
+                        Size s = estimateSize(order_point);
+                        Point mid_width = new Point((order_point.get(0).x + order_point.get(1).x) / 2 - 50, (order_point.get(0).y + order_point.get(1).y) / 2);
+                        Point mid_height = new Point((order_point.get(1).x + order_point.get(2).x) / 2, (order_point.get(1).y + order_point.get(2).y) / 2);
+
+                        objWidth.setText(Double.toString(s.width*0.1));
+                        objHeight.setText(Double.toString(s.width*0.1));
+//                    objWidth.setText(Double.toString(s.width));
+//
+                        Imgproc.line(currentFrame, order_point.get(0), order_point.get(1), new Scalar(0, 255, 0), 3);
+                        Imgproc.line(currentFrame, order_point.get(1), order_point.get(2), new Scalar(0, 255, 0), 3);
+                        Imgproc.line(currentFrame, order_point.get(2), order_point.get(3), new Scalar(0, 255, 0), 3);
+                        Imgproc.line(currentFrame, order_point.get(3), order_point.get(0), new Scalar(0, 255, 0), 3);
+
+
+                        Imgproc.putText(currentFrame, String.format("width %.1f cm", s.width * 0.1), mid_width, Core.FONT_HERSHEY_SIMPLEX, 0.65, new Scalar(0, 0, 255), 2);
+                        Imgproc.putText(currentFrame, String.format("height %.1f cm", s.height * 0.1), mid_height, Core.FONT_HERSHEY_SIMPLEX, 0.65, new Scalar(0, 0, 255), 2);
+                    }
                 }
-
-                if ((boolean)result.get("has_Obj") && !motionFlag) {
-
-                    RotatedRect rotate_rect_boxes = Imgproc.minAreaRect(new MatOfPoint2f(((MatOfPoint)result.get("contours")).toArray()));
-
-                    MatOfPoint rect_boxes = new MatOfPoint();
-                    Imgproc.boxPoints(rotate_rect_boxes, rect_boxes);
-
-                    rect_boxes.convertTo(rect_boxes, CvType.CV_32S);
-                    // get order_point
-                    List<Point> order_point = orderPoint(rect_boxes.toList().subList(0,4));
-                    rect_boxes.fromList(order_point);
-                    //estimate size
-                    Size s = estimateSize(order_point);
-                    Point mid_width = new Point((order_point.get(0).x + order_point.get(1).x)/2 - 50, (order_point.get(0).y + order_point.get(1).y)/2);
-                    Point mid_height = new Point((order_point.get(1).x + order_point.get(2).x)/2 , (order_point.get(1).y + order_point.get(2).y)/2);
-
-                    Imgproc.line(currentFrame, order_point.get(0), order_point.get(1), new Scalar(0,255,0), 3);
-                    Imgproc.line(currentFrame, order_point.get(1), order_point.get(2), new Scalar(0,255,0), 3);
-                    Imgproc.line(currentFrame, order_point.get(2), order_point.get(3), new Scalar(0,255,0), 3);
-                    Imgproc.line(currentFrame, order_point.get(3), order_point.get(0), new Scalar(0,255,0), 3);
-
-
-                    Imgproc.putText(currentFrame, String.format("width %.1f cm", s.width * 0.1) ,mid_width, Core.FONT_HERSHEY_SIMPLEX, 0.65, new Scalar(0,0,255),2);
-                    Imgproc.putText(currentFrame, String.format("height %.1f cm", s.height * 0.1),mid_height, Core.FONT_HERSHEY_SIMPLEX, 0.65, new Scalar(0,0,255),2);
-                }
-                startFrame = gray_img.clone();
+                startFrame = crop_gray_img.clone();
                 Utils.matToBitmap(currentFrame, bitmap);
 
             }

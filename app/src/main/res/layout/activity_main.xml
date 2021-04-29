@@ -41,7 +41,7 @@
 				android:orientation="vertical">
 
 				<TextView
-					android:id="@+id/chieudai"
+					android:id="@+id/obj_height"
 					android:layout_width="fill_parent"
 					android:layout_height="match_parent"
 					android:layout_gravity="center"
@@ -55,6 +55,7 @@
 					android:textSize="18dp" />
 
 				<TextView
+					android:id="@+id/obj_width"
 					android:layout_width="fill_parent"
 					android:layout_height="match_parent"
 					android:layout_gravity="center"
@@ -62,12 +63,13 @@
 					android:background="@drawable/border"
 					android:gravity="center"
 					android:text="Chiều rộng y "
+
+
 					android:textColor="#262926"
-
-
 					android:textSize="18dp" />
 
 				<TextView
+					android:id="@+id/obj_depth"
 					android:layout_width="fill_parent"
 					android:layout_height="match_parent"
 					android:layout_gravity="center"
@@ -75,8 +77,8 @@
 					android:background="@drawable/border"
 					android:gravity="center"
 					android:text="Chiều cao z "
-					android:textColor="#262926"
 
+					android:textColor="#262926"
 					android:textSize="18dp" />
 			</LinearLayout>
 		</LinearLayout>
@@ -94,16 +96,15 @@
 				android:orientation="horizontal"
 				android:visibility="visible">
 
-				<TextView
+				<ImageView
+					android:id="@+id/cropImageView"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
 					android:layout_weight="1"
 					android:background="@drawable/border"
-					android:gravity="center"
-					android:text="Cấu hình cân "
-					android:textColor="#262926"
-
-					android:textSize="18dp" />
+					android:src="?attr/colorBackgroundFloating"
+					android:visibility="visible"
+					app:srcCompat="@color/BLACK" />
 
 				<TextView
 					android:layout_width="match_parent"

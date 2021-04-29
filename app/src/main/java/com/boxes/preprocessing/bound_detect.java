@@ -4,6 +4,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
@@ -28,6 +29,7 @@ public class bound_detect {
     }
 
     public static Map<String, Object> detectObject(Mat gray_img, double min_area) {
+
 
         Map<String, Object> result = new HashMap<String, Object>();
         //smooth image
@@ -84,7 +86,7 @@ public class bound_detect {
         return flag;
     }
 
-    public static List<Point> orderPoint(List<Point> box) {
+    public static List<Point> orderPoint(List<Point> box,Rect rectRoi) {
         Collections.sort(box, new Comparator<Point>() {
             @Override
             public int compare(Point p1, Point p2) {
@@ -99,12 +101,18 @@ public class bound_detect {
             Collections.swap(box,1,2);
             Collections.swap(box,2,3);
         }
+
+        for (Point p: box) {
+            p.x += rectRoi.x;
+            p.y += rectRoi.y;
+        }
+
         return box;
     }
 
     public static Size estimateSize(List<Point> box) {
-        double width = Math.sqrt(Math.abs(Math.pow(box.get(0).x,2) - Math.pow(box.get(1).x,2)));
-        double height = Math.sqrt(Math.abs(Math.pow(box.get(0).y,2) - Math.pow(box.get(3).x,2)));
+        double width = Math.sqrt(Math.abs(Math.pow(box.get(0).x - box.get(1).x,2)) + Math.abs(Math.pow(box.get(0).y - box.get(1).y,2)));
+        double height = Math.sqrt(Math.abs(Math.pow(box.get(0).x - box.get(3).x,2)) + Math.abs(Math.pow(box.get(0).y - box.get(3).y,2)));
         return new Size(width,height);
     }
 
