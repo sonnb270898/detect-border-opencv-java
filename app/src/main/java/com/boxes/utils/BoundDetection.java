@@ -1,4 +1,4 @@
-package com.boxes.preprocessing;
+package com.boxes.utils;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 //import org.opencv.highgui.HighGui;
 
-public class bound_detect {
+public class BoundDetection {
 
 //    public static final String file ="/home/son/Downloads/VID_20210415_141541.mp4";
     public static Mat resizeImage(Mat img, int width){

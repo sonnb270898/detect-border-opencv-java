@@ -1,13 +1,20 @@
-package com.example.o0orick.camera;
+package com.boxes.camera;
 
-import android.animation.Animator;
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -15,25 +22,22 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.CompoundButton;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
+import com.boxes.utils.UsbService;
+import com.boxes.camera.R;
 import com.serenegiant.common.BaseActivity;
 import com.serenegiant.usb.CameraDialog;
 import com.serenegiant.usb.IFrameCallback;
 import com.serenegiant.usb.USBMonitor;
 import com.serenegiant.usb.USBMonitor.OnDeviceConnectListener;
 import com.serenegiant.usb.USBMonitor.UsbControlBlock;
-import com.serenegiant.usb.UVCCamera;
 import com.serenegiant.usbcameracommon.UVCCameraHandler;
-import com.serenegiant.utils.ViewAnimationHelper;
 import com.serenegiant.widget.CameraViewInterface;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -45,7 +49,6 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
@@ -53,16 +56,16 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-import java.math.BigDecimal;
+import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import static com.boxes.preprocessing.bound_detect.detectMotion;
-import static com.boxes.preprocessing.bound_detect.detectObject;
-import static com.boxes.preprocessing.bound_detect.estimateSize;
-import static com.boxes.preprocessing.bound_detect.orderPoint;
+import static com.boxes.utils.BoundDetection.detectObject;
+import static com.boxes.utils.BoundDetection.estimateSize;
+import static com.boxes.utils.BoundDetection.orderPoint;
 
 public final class MainActivity extends BaseActivity implements CameraDialog.CameraDialogParent {
     private static final boolean DEBUG = true;	// TODO set false on release
@@ -71,7 +74,6 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
     private Rect rectRoi = null;
     private List<Integer> listPointInRoi = new ArrayList<>();
 
-    private boolean touchFlag = true;
 
     Mat startFrame=null;
 	private final Object mSync = new Object();
@@ -105,7 +107,7 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
 
     private TextView objHeight;
     private TextView objWidth;
-    private TextView objDepth;
+    private static TextView objDepth;
 
     private boolean isScaling = false;
     private boolean isInCapturing = false;
@@ -134,7 +136,49 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
         }
     };
 
+//====================================== USB serial ===============================================
+    /*
+     * Notifications from UsbService will be received here.
+     */
+    private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case UsbService.ACTION_USB_PERMISSION_GRANTED: // USB PERMISSION GRANTED
+                    Toast.makeText(context, "USB Ready", Toast.LENGTH_SHORT).show();
+                    break;
+                case UsbService.ACTION_USB_PERMISSION_NOT_GRANTED: // USB PERMISSION NOT GRANTED
+                    Toast.makeText(context, "USB Permission not granted", Toast.LENGTH_SHORT).show();
+                    break;
+                case UsbService.ACTION_NO_USB: // NO USB CONNECTED
+                    Toast.makeText(context, "No USB connected", Toast.LENGTH_SHORT).show();
+                    break;
+                case UsbService.ACTION_USB_DISCONNECTED: // USB DISCONNECTED
+                    Toast.makeText(context, "USB disconnected", Toast.LENGTH_SHORT).show();
+                    break;
+                case UsbService.ACTION_USB_NOT_SUPPORTED: // USB NOT SUPPORTED
+                    Toast.makeText(context, "USB device not supported", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
+    private UsbService usbService;
+//    public static EditText editText;
+    private MyHandler mHandler;
+    private final ServiceConnection usbConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName arg0, IBinder arg1) {
+            usbService = ((UsbService.UsbBinder) arg1).getService();
+            usbService.setHandler(mHandler);
+        }
 
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            usbService = null;
+        }
+    };
+
+//============================================================================================================
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,6 +219,7 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
                 finish();
             }
         });
+        mHandler = new MyHandler(this);
 
 
         // get Region of Interest
@@ -191,12 +236,12 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
             if(widthImgView != 0){
                     mImageView.setOnTouchListener(new View.OnTouchListener() {
                         int startX, startY;
-                        float ratioImgWidth = heightImgView*640/480, imgBoundary = (widthImgView - ratioImgWidth)/2;
+                        float ratioImgWidth = heightImgView*PREVIEW_WIDTH/PREVIEW_HEIGHT, imgBoundary = (widthImgView - ratioImgWidth)/2;
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
                             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                                startX = (int) ((event.getX() - imgBoundary)/ratioImgWidth*640);
-                                startY = (int) (event.getY()/heightImgView * 480);
+                                startX = (int) ((event.getX() - imgBoundary)/ratioImgWidth*PREVIEW_WIDTH);
+                                startY = (int) (event.getY()/heightImgView * PREVIEW_HEIGHT);
                                 if(event.getX() >= imgBoundary && event.getX() <= (imgBoundary + ratioImgWidth)){
                                     listPointInRoi.add(startX);
                                     listPointInRoi.add(startY);
@@ -246,6 +291,46 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
 		if (mUVCCameraView != null) {
   			mUVCCameraView.onResume();
 		}
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setFilters();  // Start listening notifications from UsbService
+        startService(UsbService.class, usbConnection, null); // Start UsbService(if it was not started before) and Bind it
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterReceiver(mUsbReceiver);
+        unbindService(usbConnection);
+    }
+
+    private void startService(Class<?> service, ServiceConnection serviceConnection, Bundle extras) {
+        if (!UsbService.SERVICE_CONNECTED) {
+            Intent startService = new Intent(this, service);
+            if (extras != null && !extras.isEmpty()) {
+                Set<String> keys = extras.keySet();
+                for (String key : keys) {
+                    String extra = extras.getString(key);
+                    startService.putExtra(key, extra);
+                }
+            }
+            startService(startService);
+        }
+        Intent bindingIntent = new Intent(this, service);
+        bindService(bindingIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private void setFilters() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(UsbService.ACTION_USB_PERMISSION_GRANTED);
+        filter.addAction(UsbService.ACTION_NO_USB);
+        filter.addAction(UsbService.ACTION_USB_DISCONNECTED);
+        filter.addAction(UsbService.ACTION_USB_NOT_SUPPORTED);
+        filter.addAction(UsbService.ACTION_USB_PERMISSION_NOT_GRANTED);
+        registerReceiver(mUsbReceiver, filter);
     }
 
     @Override
@@ -476,10 +561,9 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
                         Point mid_width = new Point((order_point.get(0).x + order_point.get(1).x) / 2 - 50, (order_point.get(0).y + order_point.get(1).y) / 2);
                         Point mid_height = new Point((order_point.get(1).x + order_point.get(2).x) / 2, (order_point.get(1).y + order_point.get(2).y) / 2);
 
-                        objWidth.setText(Double.toString(s.width*0.1));
-                        objHeight.setText(Double.toString(s.width*0.1));
-//                    objWidth.setText(Double.toString(s.width));
-//
+                        objWidth.setText(Double.toString(Math.floor(s.width*0.1)));
+                        objHeight.setText(Double.toString(Math.floor(s.height*0.1)));
+
                         Imgproc.line(currentFrame, order_point.get(0), order_point.get(1), new Scalar(0, 255, 0), 3);
                         Imgproc.line(currentFrame, order_point.get(1), order_point.get(2), new Scalar(0, 255, 0), 3);
                         Imgproc.line(currentFrame, order_point.get(2), order_point.get(3), new Scalar(0, 255, 0), 3);
@@ -507,12 +591,27 @@ public final class MainActivity extends BaseActivity implements CameraDialog.Cam
         }
     };
 
+    private static class MyHandler extends Handler {
+        private final WeakReference<MainActivity> mActivity;
 
+        public MyHandler(MainActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
 
-
-
-
-
-
-
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case UsbService.MESSAGE_FROM_SERIAL_PORT:
+                    String data = (String) msg.obj;
+                    objDepth.setText(data);
+                    break;
+                case UsbService.CTS_CHANGE:
+                    Toast.makeText(mActivity.get(), "CTS_CHANGE",Toast.LENGTH_LONG).show();
+                    break;
+                case UsbService.DSR_CHANGE:
+                    Toast.makeText(mActivity.get(), "DSR_CHANGE",Toast.LENGTH_LONG).show();
+                    break;
+            }
+        }
+    }
 }
