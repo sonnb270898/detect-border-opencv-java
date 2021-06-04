@@ -1,6 +1,8 @@
 package com.boxes.uvc.bluetooth;
 
 
+import com.boxes.service.BluetoothLeService;
+
 public interface BluetoothLeInterface {
     void getData(String var1, String var2, String var3, String var4);
 

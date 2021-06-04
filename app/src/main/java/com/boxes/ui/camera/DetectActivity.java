@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.boxes.ApplicationController;
 import com.boxes.callback.IDataCallback;
+import com.boxes.service.BluetoothLeService;
 import com.boxes.service.MyHandler;
 import com.boxes.uvc.bluetooth.BluetoothLeActivity;
 import com.serenegiant.usb.CameraDialog;
@@ -397,7 +398,7 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
     }
 
     @Override
-    public void getBluetoothLeService(com.boxes.uvc.bluetooth.BluetoothLeService var1) {
+    public void getBluetoothLeService(BluetoothLeService var1) {
 
     }
 

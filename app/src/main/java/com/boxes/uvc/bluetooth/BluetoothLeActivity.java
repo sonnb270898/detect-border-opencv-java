@@ -21,12 +21,13 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 
+import com.boxes.service.BluetoothLeService;
 import com.boxes.ui.camera.R;
+import com.boxes.utils.MyUtils;
 import com.serenegiant.common.BaseActivity;
 
 import java.util.ArrayList;

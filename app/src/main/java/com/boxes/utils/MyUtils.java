@@ -1,4 +1,4 @@
-package com.boxes.uvc.bluetooth;
+package com.boxes.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

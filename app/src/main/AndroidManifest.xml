@@ -38,7 +38,7 @@
             android:name="com.boxes.service.UsbService"
             android:enabled="true" />
 
-        <service android:name="com.boxes.uvc.bluetooth.BluetoothLeService"
+        <service android:name="com.boxes.service.BluetoothLeService"
             android:enabled="true"/>
     </application>
 
