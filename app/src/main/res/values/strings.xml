@@ -16,9 +16,10 @@
     <string name="menu_disconnect">未连接</string>
     <string name="menu_scan">扫描</string>
     <string name="menu_stop">停止</string>
-    <string name="no_data"/>
+    <string name="no_data" />
     <string name="title_devices">BLE Device Scan</string>
     <string name="unknown_characteristic">未知特征</string>
     <string name="unknown_device">未知设备</string>
     <string name="unknown_service">未知服务</string>
+
 </resources>

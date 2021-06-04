@@ -118,7 +118,7 @@ public class ApplicationController extends Application {
     }
 
 
-    private void setFilters() {
+    public void setFilters() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(UsbService.ACTION_USB_PERMISSION_GRANTED);
         filter.addAction(UsbService.ACTION_NO_USB);

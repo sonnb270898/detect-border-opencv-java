@@ -4,6 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <TextView
+        android:textSize="36sp"
+        android:text="Kết nối bluetooth"
+        android:textColor="@color/color_vt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
     <Button
         android:id="@+id/buttonOn"
         android:layout_width="match_parent"
@@ -25,12 +32,15 @@
         android:layout_height="wrap_content"
         android:text="Bluetooth Off"/>
 
-
+    <Button
+        android:text="00:15:87:00:8F:D0"
+        android:id="@+id/btnConnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:visibility="visible"
         android:id="@+id/listViewDetected"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </androidx.recyclerview.widget.RecyclerView>
+        android:layout_height="match_parent"/>
 </LinearLayout>

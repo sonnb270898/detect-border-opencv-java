@@ -120,12 +120,20 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
         mUVCCameraView.setAspectRatio(PREVIEW_WIDTH / (float)PREVIEW_HEIGHT);
         mUSBMonitor = new USBMonitor(this, mOnDeviceConnectListener);
         mCameraHandler = UVCCameraHandler.createHandler(this, mUVCCameraView, USE_SURFACE_ENCODER ? 0 : 1, PREVIEW_WIDTH, PREVIEW_HEIGHT, PREVIEW_MODE);
+
+        if ((mCameraHandler != null) && !mCameraHandler.isOpened()) {
+            CameraDialog.showDialog(DetectActivity.this);
+        } else {
+            mCameraHandler.close();
+        }
     }
 
     private void connectUSB(){
         mHandler = new MyHandler(this,this);
         if (ApplicationController.get().connected){
             ApplicationController.get().usbService.setHandler(mHandler);
+        }else {
+            ApplicationController.get().setFilters();
         }
     }
 
@@ -409,6 +417,8 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
                 finish();
                 break;
             case R.id.selectRoi:
+                heightImgView = mImageView.getHeight();
+                widthImgView = mImageView.getWidth();
                 if (listPointInRoi.size() != 0) {
                     listPointInRoi.clear();
                     rectRoi = null;
@@ -416,8 +426,7 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
                 }
                 break;
             case R.id.imageButton:
-                heightImgView = mImageView.getHeight();
-                widthImgView = mImageView.getWidth();
+
                 if ((mCameraHandler != null) && !mCameraHandler.isOpened()) {
                     CameraDialog.showDialog(DetectActivity.this);
                 } else {

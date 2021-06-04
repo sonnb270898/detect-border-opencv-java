@@ -14,9 +14,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.boxes.ApplicationController;
 import com.boxes.ui.adapter.DeviceAdapter;
 import com.boxes.ui.camera.DetectActivity;
 import com.boxes.ui.camera.R;
@@ -26,9 +28,16 @@ import com.tbruyelle.rxpermissions3.RxPermissions;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity implements DeviceAdapter.IOnClickListener , View.OnClickListener {
 
+    @BindView(R.id.listViewDetected)
     RecyclerView listViewDetected;
+    @BindView(R.id.btnConnect)
+    Button btnConnect;
+
     Button buttonSearch,buttonOn,buttonDesc,buttonOff;
     private DeviceAdapter adapter;
     BluetoothAdapter bluetoothAdapter = null;
@@ -38,9 +47,10 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.IOn
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        ButterKnife.bind(this);
         initView();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        listViewDetected.setLayoutManager(new LinearLayoutManager(this));
+        listViewDetected.setLayoutManager(new GridLayoutManager(this,6));
         listViewDetected.setHasFixedSize(true);
         adapter = new DeviceAdapter(this,this);
         adapter.setListDevice(arrayListBluetoothDevices);
@@ -71,6 +81,12 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.IOn
         buttonSearch.setOnClickListener(this);
         buttonDesc.setOnClickListener(this);
         buttonOff.setOnClickListener(this);
+        btnConnect.setOnClickListener(v -> {
+            Intent intent = new Intent(this, DetectActivity.class);
+            intent.putExtra(BluetoothLeActivity.EXTRAS_DEVICE_NAME,"can");
+            intent.putExtra(BluetoothLeActivity.EXTRAS_DEVICE_ADDRESS,"00:15:87:00:8F:D0");
+            startActivity(intent);
+        });
     }
 
     @Override
@@ -115,21 +131,23 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.IOn
             String action = intent.getAction();
             if(BluetoothDevice.ACTION_FOUND.equals(action)){
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if(arrayListBluetoothDevices.size()<1) {
-                    arrayListBluetoothDevices.add(device);
-                    adapter.notifyDataSetChanged();
-                } else {
-                    boolean flag = true;
-                    for(int i = 0; i<arrayListBluetoothDevices.size();i++) {
-                        if(device.getAddress().equals(arrayListBluetoothDevices.get(i).getAddress())) {
-                            flag = false;
-                        }
-                    }
-                    if(flag) {
-                        arrayListBluetoothDevices.add(device);
-                        adapter.notifyDataSetChanged();
-                    }
-                }
+                arrayListBluetoothDevices.add(device);
+                adapter.notifyDataSetChanged();
+//                if(arrayListBluetoothDevices.size()<1) {
+//                    arrayListBluetoothDevices.add(device);
+//                    adapter.notifyDataSetChanged();
+//                } else {
+//                    boolean flag = true;
+//                    for(int i = 0; i<arrayListBluetoothDevices.size();i++) {
+//                        if(device.getAddress().equals(arrayListBluetoothDevices.get(i).getAddress())) {
+//                            flag = false;
+//                        }
+//                    }
+//                    if(flag) {
+//                        arrayListBluetoothDevices.add(device);
+//                        adapter.notifyDataSetChanged();
+//                    }
+//                }
             }
         }
     };
@@ -137,13 +155,11 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.IOn
     private void startSearching() {
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(myReceiver,intentFilter);
-        //MainActivity.this.registerReceiver(myReceiver, intentFilter);
         bluetoothAdapter.startDiscovery();
     }
     private void onBluetooth() {
         if(!bluetoothAdapter.isEnabled()) {
             bluetoothAdapter.enable();
-            Log.i("Log", "Bluetooth is Enabled");
         }
     }
 
@@ -157,7 +173,6 @@ public class MainActivity extends AppCompatActivity implements DeviceAdapter.IOn
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
         startActivity(discoverableIntent);
-        Log.i("Log", "Discoverable ");
     }
 
     @Override

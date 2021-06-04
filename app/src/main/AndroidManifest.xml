@@ -3,10 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.boxes.ui.camera">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.DEVICE_POWER"
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission
+        android:name="android.permission.DEVICE_POWER"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -20,13 +21,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-<!--        <activity android:name="com.boxes.ui.MainActivity"></activity>-->
+<!--        <activity android:name="com.boxes.ui.SplashActivity"></activity>-->
+        <activity android:name="com.boxes.ui.MainActivity"/>
+        <!-- <activity android:name="com.boxes.ui.MainActivity"></activity> -->
         <activity
-            android:name="com.boxes.ui.camera.DetectActivity"
+            android:name=".DetectActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.boxes.ui.MainActivity"
-            android:screenOrientation="portrait">
+            android:name="com.boxes.ui.SplashActivity"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,9 +40,13 @@
         <service
             android:name="com.boxes.service.UsbService"
             android:enabled="true" />
+        <service
+            android:name="com.boxes.service.BluetoothLeService"
+            android:enabled="true" />
 
-        <service android:name="com.boxes.service.BluetoothLeService"
-            android:enabled="true"/>
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
