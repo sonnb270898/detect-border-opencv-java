@@ -1,21 +1,19 @@
-package com.boxes.handler;
+package com.boxes.service;
 
+import android.app.Activity;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
 import com.boxes.callback.IDataCallback;
-import com.boxes.camera.MainActivity;
-import com.boxes.utils.UsbService;
 
 import java.lang.ref.WeakReference;
-import java.util.logging.LogRecord;
 
 public class MyHandler extends Handler {
-    private final WeakReference<MainActivity> mActivity;
+    private final WeakReference<Activity> mActivity;
     private IDataCallback callback;
 
-    public MyHandler(MainActivity activity,IDataCallback callback) {
+    public MyHandler(Activity activity, IDataCallback callback) {
         mActivity = new WeakReference<>(activity);
         this.callback = callback;
     }

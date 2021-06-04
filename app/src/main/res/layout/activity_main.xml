@@ -40,46 +40,72 @@
 				android:layout_weight="6"
 				android:orientation="vertical">
 
-				<TextView
-					android:id="@+id/obj_height"
-					android:layout_width="fill_parent"
-					android:layout_height="match_parent"
-					android:layout_gravity="center"
+				<LinearLayout
+					android:orientation="horizontal"
 					android:layout_weight="1"
-					android:background="@drawable/border"
-					android:gravity="center"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent">
+					<TextView
+						android:id="@+id/obj_height"
+						android:layout_width="fill_parent"
+						android:layout_height="match_parent"
+						android:layout_gravity="center"
+						android:layout_weight="1"
+						android:background="@drawable/border"
+						android:gravity="center"
+						android:text="Chiều dài "
+						android:textColor="#262926"
+						android:textSize="18dp" />
 
-					android:text="Chiều dài "
+					<TextView
+						android:id="@+id/obj_width"
+						android:layout_width="fill_parent"
+						android:layout_height="match_parent"
+						android:layout_gravity="center"
+						android:layout_weight="1"
+						android:background="@drawable/border"
+						android:gravity="center"
+						android:text="Chiều rộng y "
+						android:textColor="#262926"
+						android:textSize="18dp" />
+				</LinearLayout>
 
-					android:textColor="#262926"
-					android:textSize="18dp" />
-
-				<TextView
-					android:id="@+id/obj_width"
-					android:layout_width="fill_parent"
-					android:layout_height="match_parent"
-					android:layout_gravity="center"
+				<LinearLayout
+					android:orientation="horizontal"
 					android:layout_weight="1"
-					android:background="@drawable/border"
-					android:gravity="center"
-					android:text="Chiều rộng y "
+					android:layout_width="match_parent"
+					android:layout_height="match_parent">
+					<TextView
+						android:id="@+id/obj_depth"
+						android:layout_width="fill_parent"
+						android:layout_height="match_parent"
+						android:layout_gravity="center"
+						android:layout_weight="1"
+						android:background="@drawable/border"
+						android:gravity="center"
+						android:text="Chiều cao z "
+
+						android:textColor="#262926"
+						android:textSize="18dp" />
+
+					<TextView
+						android:id="@+id/tvWeight"
+						android:layout_width="fill_parent"
+						android:layout_height="match_parent"
+						android:layout_gravity="center"
+						android:layout_weight="1"
+						android:background="@drawable/border"
+						android:gravity="center"
+						android:text="Cân nặng"
+						android:textColor="#262926"
+						android:textSize="18dp" />
+				</LinearLayout>
 
 
-					android:textColor="#262926"
-					android:textSize="18dp" />
 
-				<TextView
-					android:id="@+id/obj_depth"
-					android:layout_width="fill_parent"
-					android:layout_height="match_parent"
-					android:layout_gravity="center"
-					android:layout_weight="1"
-					android:background="@drawable/border"
-					android:gravity="center"
-					android:text="Chiều cao z "
 
-					android:textColor="#262926"
-					android:textSize="18dp" />
+
+
 			</LinearLayout>
 		</LinearLayout>
 
@@ -118,6 +144,7 @@
 					android:textSize="18dp" />
 
 				<TextView
+					android:id="@+id/tvSettingCam"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
 					android:layout_weight="1"
@@ -125,7 +152,6 @@
 					android:gravity="center"
 					android:text="Cấu hình camera  "
 					android:textColor="#262926"
-
 					android:textSize="18dp" />
 			</LinearLayout>
 

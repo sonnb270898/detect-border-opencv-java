@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">Camera</string>
+
+    <string name="select">Select USB Web Camera</string>
+    <string name="camera">Camera</string>
+    <string name="refresh">Refresh</string>
+    <string name="no_device">No USB camera found</string>
+    <string name="ble_not_supported">不支持BLE</string>
+    <string name="connected">已连接</string>
+    <string name="disconnected">已断开</string>
+    <string name="error_bluetooth_not_supported">不支持蓝牙-Bluetooth not supported.</string>
+    <string name="label_data">数据:</string>
+    <string name="label_device_address">地址:</string>
+    <string name="label_state">状态:</string>
+    <string name="menu_connect">连接</string>
+    <string name="menu_disconnect">未连接</string>
+    <string name="menu_scan">扫描</string>
+    <string name="menu_stop">停止</string>
+    <string name="no_data"/>
+    <string name="title_devices">BLE Device Scan</string>
+    <string name="unknown_characteristic">未知特征</string>
+    <string name="unknown_device">未知设备</string>
+    <string name="unknown_service">未知服务</string>
 </resources>

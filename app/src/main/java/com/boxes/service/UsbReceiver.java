@@ -1,17 +1,14 @@
-package com.boxes.broadcast;
+package com.boxes.service;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
-import com.boxes.utils.UsbService;
-
 public class UsbReceiver extends BroadcastReceiver {
-    private Context context;
 
-    public UsbReceiver(Context context) {
-        this.context = context;
+    public UsbReceiver() {
+
     }
 
     @Override

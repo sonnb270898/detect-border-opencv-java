@@ -1,14 +1,12 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    
     repositories {
         google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0'
-        
+        classpath "com.android.tools.build:gradle:7.0.0-alpha03"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -17,23 +15,16 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url 'http://raw.github.com/saki4510t/libcommon/master/repository/' }
-        maven { url "https://jitpack.io" }
         google()
         jcenter()
-    }
+        maven { url 'http://raw.github.com/saki4510t/libcommon/master/repository/' }
+        maven { url "https://jitpack.io" }
+        maven { url "https://oss.jfrog.org/libs-snapshot" }
 
-    configurations.all {
-        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-            def requested = details.requested
-            if (requested.group == 'com.android.support') {
-                if (!requested.name.startsWith("multidex")) {
-                    details.useVersion '27.1.1'
-                }
-            }
+        flatDir {
+            dirs 'libs'
         }
     }
-
 }
 
 task clean(type: Delete) {

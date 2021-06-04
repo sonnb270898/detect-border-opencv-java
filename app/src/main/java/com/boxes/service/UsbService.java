@@ -1,4 +1,4 @@
-package com.boxes.utils;
+package com.boxes.service;
 
 import android.app.PendingIntent;
 import android.app.Service;
