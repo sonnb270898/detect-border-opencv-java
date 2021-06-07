@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -19,12 +21,18 @@ import com.boxes.ApplicationController;
 import com.boxes.callback.IDataCallback;
 import com.boxes.service.BluetoothLeService;
 import com.boxes.service.MyHandler;
+import com.boxes.ui.R;
 import com.boxes.uvc.bluetooth.BluetoothLeActivity;
 import com.serenegiant.usb.CameraDialog;
 import com.serenegiant.usb.IFrameCallback;
 import com.serenegiant.usb.USBMonitor;
 import com.serenegiant.usbcameracommon.UVCCameraHandler;
 import com.serenegiant.widget.CameraViewInterface;
+
+import net.posprinter.posprinterface.ProcessData;
+import net.posprinter.posprinterface.UiExecute;
+import net.posprinter.utils.DataForSendToPrinterPos80;
+
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
@@ -38,6 +46,8 @@ import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,14 +85,16 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
     TextView tvWeight;
     @BindView(R.id.tvSettingCam)
     TextView tvSettingCam;
+    @BindView(R.id.tvSettingHeight)
+    TextView tvSettingHeight;
 
     private static final String TAG = "tienld";
     private Rect rectRoi = null;
     private List<Integer> listPointInRoi = new ArrayList<>();
     private Mat startFrame=null;
     private static final boolean USE_SURFACE_ENCODER = false;
-    private static final int PREVIEW_WIDTH = 1280; // 640
-    private static final int PREVIEW_HEIGHT = 720; //480
+    private static final int PREVIEW_WIDTH = 1280; // 640 1280
+    private static final int PREVIEW_HEIGHT = 720; //480 720
     private static final int PREVIEW_MODE = 0; // YUV
     private USBMonitor mUSBMonitor;
     private UVCCameraHandler mCameraHandler;
@@ -98,6 +110,7 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
     private Bitmap bitmap = null;
     private final Bitmap srcBitmap = Bitmap.createBitmap(PREVIEW_WIDTH, PREVIEW_HEIGHT, Bitmap.Config.RGB_565);
     private MyHandler mHandler;
+    private boolean isRequest;
 
 
     @Override
@@ -120,12 +133,6 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
         mUVCCameraView.setAspectRatio(PREVIEW_WIDTH / (float)PREVIEW_HEIGHT);
         mUSBMonitor = new USBMonitor(this, mOnDeviceConnectListener);
         mCameraHandler = UVCCameraHandler.createHandler(this, mUVCCameraView, USE_SURFACE_ENCODER ? 0 : 1, PREVIEW_WIDTH, PREVIEW_HEIGHT, PREVIEW_MODE);
-
-        if ((mCameraHandler != null) && !mCameraHandler.isOpened()) {
-            CameraDialog.showDialog(DetectActivity.this);
-        } else {
-            mCameraHandler.close();
-        }
     }
 
     private void connectUSB(){
@@ -173,11 +180,6 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
     @Override
     protected void onStart() {
         super.onStart();
-        if (!OpenCVLoader.initDebug()) {
-            Log.e(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-        } else {
-            Log.d(TAG, "OpenCV library found inside package. Using it!");
-        }
         mUSBMonitor.register();
 		if (mUVCCameraView != null) {
   			mUVCCameraView.onResume();
@@ -219,14 +221,33 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
 
     private final USBMonitor.OnDeviceConnectListener mOnDeviceConnectListener = new USBMonitor.OnDeviceConnectListener() {
         @Override
-        public void onAttach(final UsbDevice device) { }
+        public void onAttach(final UsbDevice device) {
+            Log.e(TAG, "onAttach: ");
+            mUSBMonitor.requestPermission(device);
+        }
 
         @Override
         public void onConnect(final UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, final boolean createNew) {
-            if (mCameraHandler != null) {
+
+            if (mCameraHandler !=null){
+                Log.e(TAG, "onConnect: ");
                 mCameraHandler.open(ctrlBlock);
                 startPreview();
             }
+
+//            if (mCameraHandler != null) {
+//                new Thread(() -> {
+//                    try {
+//                        Thread.sleep(2000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    Log.e(TAG, "onConnect: ");
+//                    mCameraHandler.open(ctrlBlock);
+//                    startPreview();
+//                    updateItems();
+//                }).start();
+//            }
         }
 
         @Override
@@ -245,7 +266,8 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
         }
         @Override
         public void onDettach(final UsbDevice device) {
-            Toast.makeText(DetectActivity.this, "USB_DEVICE_DETACHED", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Device Detached");
+            mCameraHandler.close();
         }
 
         @Override
@@ -255,12 +277,13 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
 
     @Override
     public USBMonitor getUSBMonitor() {
+        Log.e(TAG, "getUSBMonitor: ");
         return mUSBMonitor;
 	}
 
     @Override
     public void onDialogResult(boolean canceled) {
-        Log.v(TAG, "onDialogResult:canceled=" + canceled);
+        Log.e(TAG, "onDialogResult" +  canceled);
     }
 
     private boolean isActive() {
@@ -315,6 +338,7 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
                 bitmap = Bitmap.createBitmap(mCaptureWidth, mCaptureHeight, Bitmap.Config.ARGB_8888);
             }
 
+            //bitmap = Bitmap.createBitmap(srcBitmap);
             bitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.ARGB_8888);
 
             Mat currentFrame = new Mat();
@@ -378,9 +402,7 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
     private final Runnable mUpdateImageTask = new Runnable() {
         @Override
         public void run() {
-            synchronized (bitmap) {
-                mImageView.setImageBitmap(bitmap);
-            }
+            mImageView.setImageBitmap(bitmap);
         }
     };
 
@@ -410,7 +432,7 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
 
     }
 
-    @OnClick({R.id.obj_height,R.id.button_call_disconnect,R.id.selectRoi,R.id.imageButton,R.id.tvSettingCam})
+    @OnClick({R.id.obj_height,R.id.button_call_disconnect,R.id.selectRoi,R.id.imageButton,R.id.tvSettingCam,R.id.tvSettingHeight})
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.button_call_disconnect:
@@ -426,17 +448,54 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
                 }
                 break;
             case R.id.imageButton:
-
                 if ((mCameraHandler != null) && !mCameraHandler.isOpened()) {
                     CameraDialog.showDialog(DetectActivity.this);
+                    //mUSBMonitor.requestPermission(mUSBMonitor.getDevices().next());
                 } else {
-                    mCameraHandler.close();
+                    if (mCameraHandler != null) {
+                        mCameraHandler.close();
+                    }
                 }
                 break;
             case R.id.tvSettingCam:
                 ApplicationController.get().usbService.write("0\r".getBytes());
                 break;
+            case R.id.tvSettingHeight:
+                if (ApplicationController.get().connectedXprinter){
+                    Log.e(TAG, "connectedXprinter: ");
+                    ApplicationController.get().binder.writeDataByYouself(new UiExecute() {
+                        @Override
+                        public void onsucess() {
+                            Log.e(TAG, "onsucess: ");
+                        }
+
+                        @Override
+                        public void onfailed() {
+                            Log.e(TAG, "onfailed: ");
+                        }
+                    }, () -> {
+                        List<byte[]> list = new ArrayList<>();
+                        String str = "Welcome to use the impact and thermal printer manufactured by professional POS receipt printer company!asasdasd asd asd asdasd asd asdasd asd asdasdasdas dasdadasdasd asdasdasd asdasd asd asd asd asd asd asd a ds";
+                        byte[] data1 = strTobytes(str);
+                        list.add(data1);
+                        list.add(DataForSendToPrinterPos80.printQRcode(4,4,"asdhashdahsd asdahsdhasd"));
+                        list.add(DataForSendToPrinterPos80.printByPagemodel());
+                        return list;
+                    });
+                }
+                break;
 
         }
+    }
+
+    public static byte[] strTobytes(String str){
+        byte[] b=null,data=null;
+        try {
+            b = str.getBytes("utf-8");
+            data=new String(b,"utf-8").getBytes("gbk");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return data;
     }
 }

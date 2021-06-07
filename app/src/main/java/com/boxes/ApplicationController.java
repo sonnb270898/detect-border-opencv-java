@@ -16,11 +16,14 @@ import android.widget.Toast;
 
 import com.boxes.service.UsbReceiver;
 import com.boxes.service.UsbService;
+import com.boxes.ui.MainActivity;
 
 import net.posprinter.posprinterface.IMyBinder;
 import net.posprinter.posprinterface.UiExecute;
 import net.posprinter.service.PosprinterService;
 import net.posprinter.utils.PosPrinterDev;
+
+import org.opencv.android.OpenCVLoader;
 
 import java.util.Set;
 
@@ -42,6 +45,7 @@ public class ApplicationController extends Application {
 
     // Connect USB
     public boolean connected = false;
+    public boolean connectedXprinter = false;
     private UsbReceiver mUsbReceiver;
     public UsbService usbService;
     //IMyBinder interface，All methods that can be invoked to connect and send data are encapsulated within this interface
@@ -80,6 +84,11 @@ public class ApplicationController extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        if (!OpenCVLoader.initDebug()) {
+            Log.e("tienld", "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+        } else {
+            Log.d("tienld", "OpenCV library found inside package. Using it!");
+        }
         setInstance(this);
         registerActivityLifecycleCallbacks(mActivityLifecycleCallbacks);
     }
@@ -87,10 +96,12 @@ public class ApplicationController extends Application {
 
     private void connectXprinter(){
         if (PosPrinterDev.GetUsbPathNames(this) !=null && !PosPrinterDev.GetUsbPathNames(this).isEmpty()) {
+            Log.e("tienld", "connectXprinter: " + PosPrinterDev.GetUsbPathNames(this) );
             String printer = PosPrinterDev.GetUsbPathNames(this).get(0);
             binder.connectUsbPort(getApplicationContext(), printer , new UiExecute() {
                 @Override
                 public void onsucess() {
+                    connectedXprinter = true;
                     setPortType();
                 }
 
@@ -158,23 +169,29 @@ public class ApplicationController extends Application {
 
         @Override
         public void onActivityStarted(Activity activity) {
-            mUsbReceiver = new UsbReceiver();
-            //bind service，get ImyBinder object
-            Intent intent=new Intent(activity, PosprinterService.class);
-            bindService(intent, conn, BIND_AUTO_CREATE);
+            if (activity instanceof MainActivity){
+                mUsbReceiver = new UsbReceiver();
+                //bind service，get ImyBinder object
+                Intent intent=new Intent(activity, PosprinterService.class);
+                bindService(intent, conn, BIND_AUTO_CREATE);
+            }
         }
 
         @Override
         public void onActivityResumed(Activity activity) {
-            setFilters();
-            startService(UsbService.class, usbConnection, null);
+            if (activity instanceof MainActivity){
+                setFilters();
+                startService(UsbService.class, usbConnection, null);
+            }
         }
 
 
         @Override
         public void onActivityPaused(Activity activity) {
-            unregisterReceiver(mUsbReceiver);
-            unbindService(usbConnection);
+            if (activity instanceof MainActivity){
+                unregisterReceiver(mUsbReceiver);
+                unbindService(usbConnection);
+            }
         }
 
         @Override

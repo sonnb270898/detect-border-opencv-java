@@ -133,6 +133,7 @@
 					app:srcCompat="@color/BLACK" />
 
 				<TextView
+					android:id="@+id/tvSettingHeight"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
 					android:layout_weight="1"
@@ -140,7 +141,6 @@
 					android:gravity="center"
 					android:text="Cấu hình chiều cao "
 					android:textColor="#262926"
-
 					android:textSize="18dp" />
 
 				<TextView

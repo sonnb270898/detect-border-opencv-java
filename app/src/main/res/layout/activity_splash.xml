@@ -2,21 +2,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@android:color/white"
+    android:background="@color/color_vt"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.boxes.ui.SplashActivity">
 
     <LinearLayout
-        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_centerInParent="true"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
        <ImageView
-           android:src="@drawable/logo"
+           android:src="@drawable/logo_white"
            android:layout_width="wrap_content"
-           android:layout_height="500dp"/>
+           android:layout_height="wrap_content"/>
         <ImageView
+            android:layout_marginTop="70dp"
             android:layout_gravity="center"
             android:layout_centerInParent="true"
             android:src="@drawable/box"
@@ -25,5 +27,17 @@
     </LinearLayout>
 
 
+
+    <TextView
+        android:fontFamily="@font/itim"
+        android:textSize="24sp"
+        android:textColor="@color/WHITE"
+        android:textStyle="bold"
+        android:text="made by R&amp;D"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>

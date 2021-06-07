@@ -10,7 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.boxes.ui.camera.R;
+
+import com.boxes.ui.R;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -26,7 +26,7 @@ import androidx.core.content.ContextCompat;
 
 
 import com.boxes.service.BluetoothLeService;
-import com.boxes.ui.camera.R;
+import com.boxes.ui.R;
 import com.boxes.utils.MyUtils;
 import com.serenegiant.common.BaseActivity;
 

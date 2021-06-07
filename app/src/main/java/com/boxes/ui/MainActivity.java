@@ -15,13 +15,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.boxes.ApplicationController;
 import com.boxes.ui.adapter.DeviceAdapter;
 import com.boxes.ui.camera.DetectActivity;
-import com.boxes.ui.camera.R;
 import com.boxes.uvc.bluetooth.BluetoothLeActivity;
 import com.tbruyelle.rxpermissions3.RxPermissions;
 

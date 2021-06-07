@@ -9,6 +9,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters "armeabi-v7a"
+        }
+
     }
     buildTypes {
         release {
@@ -43,9 +48,7 @@ dependencies {
     implementation(name: 'libuvccamera', ext: 'aar')
     implementation(name: 'posprinterconnectandsendsdk', ext: 'jar')
     implementation(name: 'usbCameraCommon', ext: 'aar')
-    implementation("com.serenegiant:common:1.5.20") {
-        exclude module: 'support-v4'
-    }
+    implementation("com.serenegiant:common:4.1.1")
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
     implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
     implementation 'com.github.tbruyelle:rxpermissions:0.12'
