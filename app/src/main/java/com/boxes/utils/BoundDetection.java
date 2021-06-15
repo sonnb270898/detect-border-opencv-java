@@ -115,9 +115,4 @@ public class BoundDetection {
         double height = Math.sqrt(Math.abs(Math.pow(box.get(0).x - box.get(3).x,2)) + Math.abs(Math.pow(box.get(0).y - box.get(3).y,2)));
         return new Size(width,height);
     }
-
-    public static void main(String args[]) {
-        //Loading the OpenCV core library
-        System.loadLibrary( Core.NATIVE_LIBRARY_NAME);
-    }
 }
