@@ -121,7 +121,7 @@ public class ConvertFile {
 
         //Reading the Image from the video
 //        VideoCapture capture = new VideoCapture();
-//        capture.open(0);
+//        capture.open(0); cmamab abasd
         Bitmap bitmap1 = Bitmap.createBitmap(bitmap);
         Mat frame = new Mat();
         Utils.bitmapToMat(bitmap, frame);
