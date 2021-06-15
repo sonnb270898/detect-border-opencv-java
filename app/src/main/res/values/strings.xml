@@ -21,5 +21,7 @@
     <string name="unknown_characteristic">未知特征</string>
     <string name="unknown_device">未知设备</string>
     <string name="unknown_service">未知服务</string>
+    <string name="usb_pre_con">present connected Usb dev:</string>
+
 
 </resources>

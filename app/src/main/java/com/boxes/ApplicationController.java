@@ -11,12 +11,21 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.boxes.service.UsbReceiver;
 import com.boxes.service.UsbService;
 import com.boxes.ui.MainActivity;
+import com.boxes.ui.R;
 
 import net.posprinter.posprinterface.IMyBinder;
 import net.posprinter.posprinterface.UiExecute;
@@ -25,6 +34,8 @@ import net.posprinter.utils.PosPrinterDev;
 
 import org.opencv.android.OpenCVLoader;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class ApplicationController extends Application {
@@ -43,6 +54,11 @@ public class ApplicationController extends Application {
         mInstance = value;
     }
 
+    View dialogView3;
+    private TextView tv_usb;
+    private List<String> usbList,usblist;
+    private ListView lv1,lv2,lv_usb;
+    private ArrayAdapter<String> adapter;
     // Connect USB
     public boolean connected = false;
     public boolean connectedXprinter = false;
@@ -56,26 +72,31 @@ public class ApplicationController extends Application {
     ServiceConnection conn= new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.e("tienld", "conn: ");
             binder= (IMyBinder) iBinder;
             connectXprinter();
-            Log.e("tienld","ServiceConnection true");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            Log.e("tienld","ServiceConnection fail");
+            Log.e("tienld", "dis conn: ");
         }
     };
 
     private final ServiceConnection usbConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName arg0, IBinder arg1) {
+            Log.e("tienld", "onServiceConnected: ");
+            //bind service，get ImyBinder object
+            Intent intent=new Intent(getApplicationContext(), PosprinterService.class);
+            bindService(intent, conn, BIND_AUTO_CREATE);
             connected = true;
             usbService = ((UsbService.UsbBinder) arg1).getService();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
+            Log.e("tienld", "onServiceDisconnected: ");
             usbService = null;
             connected = false;
         }
@@ -96,7 +117,6 @@ public class ApplicationController extends Application {
 
     private void connectXprinter(){
         if (PosPrinterDev.GetUsbPathNames(this) !=null && !PosPrinterDev.GetUsbPathNames(this).isEmpty()) {
-            Log.e("tienld", "connectXprinter: " + PosPrinterDev.GetUsbPathNames(this) );
             String printer = PosPrinterDev.GetUsbPathNames(this).get(0);
             binder.connectUsbPort(getApplicationContext(), printer , new UiExecute() {
                 @Override
@@ -107,7 +127,8 @@ public class ApplicationController extends Application {
 
                 @Override
                 public void onfailed() {
-                    Log.e("tienld","connectXprinter" + " faild");
+                    // Lần đâu connect máy in fail sẽ call laị để kết nối máy in
+                    connectXprinter();
                 }
             });
         }
@@ -171,9 +192,6 @@ public class ApplicationController extends Application {
         public void onActivityStarted(Activity activity) {
             if (activity instanceof MainActivity){
                 mUsbReceiver = new UsbReceiver();
-                //bind service，get ImyBinder object
-                Intent intent=new Intent(activity, PosprinterService.class);
-                bindService(intent, conn, BIND_AUTO_CREATE);
             }
         }
 
@@ -209,5 +227,38 @@ public class ApplicationController extends Application {
 
         }
     };
+
+    public void setUSB(){
+        LayoutInflater inflater=LayoutInflater.from(this);
+        dialogView3=inflater.inflate(R.layout.usb_link,null);
+        tv_usb= (TextView) dialogView3.findViewById(R.id.textView1);
+        lv_usb= (ListView) dialogView3.findViewById(R.id.listView1);
+
+
+        usbList= PosPrinterDev.GetUsbPathNames(this);
+        if (usbList==null){
+            usbList=new ArrayList<>();
+        }
+        usblist=usbList;
+        tv_usb.setText(getString(R.string.usb_pre_con)+usbList.size());
+        adapter=new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,usbList);
+        lv_usb.setAdapter(adapter);
+
+
+        AlertDialog dialog=new AlertDialog.Builder(this).setView(dialogView3).create();
+        dialog.show();
+
+        setUsbLisener(dialog);
+
+    }
+
+    String usbDev="";
+    public void setUsbLisener(final AlertDialog dialog) {
+        lv_usb.setOnItemClickListener((adapterView, view, i, l) -> {
+            usbDev=usbList.get(i);
+            dialog.cancel();
+            Log.e("usbDev: ",usbDev);
+        });
+    }
 
 }

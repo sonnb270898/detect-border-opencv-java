@@ -228,7 +228,6 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
 
         @Override
         public void onConnect(final UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, final boolean createNew) {
-
             if (mCameraHandler !=null){
                 Log.e(TAG, "onConnect: ");
                 mCameraHandler.open(ctrlBlock);
@@ -338,8 +337,8 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
                 bitmap = Bitmap.createBitmap(mCaptureWidth, mCaptureHeight, Bitmap.Config.ARGB_8888);
             }
 
-            //bitmap = Bitmap.createBitmap(srcBitmap);
-            bitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+            bitmap = Bitmap.createBitmap(srcBitmap);
+            //bitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.ARGB_8888);
 
             Mat currentFrame = new Mat();
             Mat crop_gray_img = new Mat();
