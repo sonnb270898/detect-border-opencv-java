@@ -64,15 +64,15 @@ public class ConvertFile {
         Mat hierarchy = new Mat();
         Imgproc.findContours(img, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
         // draw contour
-        Imgproc.drawContours(img_cotour, contours, -1, new Scalar(0,255,0), 2);
-        Imgproc.circle(img_cotour, new Point(320, 240), 10, new Scalar(0, 0, 255), -1);
+        Imgproc.drawContours(img_cotour, contours, -1, new Scalar(0,0,255), 2);
+        //Imgproc.circle(img_cotour, new Point(320, 240), 10, new Scalar(0, 0, 255), -1);
 
         double a = (7.25 * 10637.37974683544 - Matrix[0][2]) / Matrix[0][0];
         double b = (7.25 * 10637.37974683544 - Matrix[1][2]) / Matrix[1][1];
-        Imgproc.circle(img_cotour, new Point(320 - (int) a, 240 - (int) b), 10, new Scalar(0, 0, 255), -1);
-        Imgproc.circle(img_cotour, new Point(320 + (int) a, 240 + (int) b), 10, new Scalar(0, 0, 255), -1);
-        Imgproc.circle(img_cotour, new Point(320 - (int) a, 240 + (int) b), 10, new Scalar(0, 0, 255), -1);
-        Imgproc.circle(img_cotour, new Point(320 + (int) a, 240 - (int) b), 10, new Scalar(0, 0, 255), -1);
+//        Imgproc.circle(img_cotour, new Point(320 - (int) a, 240 - (int) b), 10, new Scalar(0, 0, 255), -1);
+//        Imgproc.circle(img_cotour, new Point(320 + (int) a, 240 + (int) b), 10, new Scalar(0, 0, 255), -1);
+//        Imgproc.circle(img_cotour, new Point(320 - (int) a, 240 + (int) b), 10, new Scalar(0, 0, 255), -1);
+//        Imgproc.circle(img_cotour, new Point(320 + (int) a, 240 - (int) b), 10, new Scalar(0, 0, 255), -1);
 
         double maxVal = 0;
         int maxValIdx = 0;
@@ -110,30 +110,32 @@ public class ConvertFile {
             double dr_H = s.height / 12068.5;
 
             Imgproc.putText(img_cotour, String.format("%.1f cm",dr_H), new Point(tltr.x, tltr.y - 20), Core.FONT_HERSHEY_SIMPLEX, .7,
-                    new Scalar (0, 255, 0), 2);
+                    new Scalar (0, 0, 255), 2);
             Imgproc.putText(img_cotour, String.format("%.1f cm",dr_W), new Point(tlbl.x - 20, tlbl.y), Core.FONT_HERSHEY_SIMPLEX, .7,
-                    new Scalar (0, 255, 0), 2);
+                    new Scalar (0, 0, 255), 2);
         }
     }
 
 
-    public static void main(Bitmap bitmap,Bitmap bitmap1) {
+    public static Bitmap main(Bitmap bitmap) {
 
         //Reading the Image from the video
 //        VideoCapture capture = new VideoCapture();
 //        capture.open(0); cmamab abasd
-
+        Bitmap bitmap2 = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
         Mat frame = new Mat();
         Utils.bitmapToMat(bitmap, frame);
         Mat KERNEL1 = Mat.ones(8,8,CvType.CV_8U);
         Mat KERNEL2 = Mat.ones(5,5,CvType.CV_8U);
-        while (true)
-        {
-            //capture.read(frame);
 
+
+
+        while (true) {
+            //capture.read(frame);
+            frame = resizeImage(frame, 1280, 720);
             Mat img_contour = frame.clone();
 
-            frame = resizeImage(frame, 640, 480);
+
             //blur image
             Mat blur_img = new Mat();
             Imgproc.GaussianBlur(frame, blur_img, new Size(7,7),0);
@@ -141,7 +143,7 @@ public class ConvertFile {
             Mat gray_img = new Mat();
             Imgproc.cvtColor(blur_img, gray_img, Imgproc.COLOR_RGBA2GRAY);
             //get threshold
-            int threshold1 = 120;
+            int threshold1 = 74;
             int threshold2 = 255;
             //get Canny
             Mat canny_img = new Mat();
@@ -151,8 +153,8 @@ public class ConvertFile {
             Imgproc.dilate(canny_img, process_img, KERNEL1);
             Imgproc.erode(process_img, process_img, KERNEL2);
             get_contour(canny_img, img_contour);
-            Bitmap bitmap2 = Bitmap.createBitmap(640, 480, Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(img_contour, bitmap2);
+            Log.e("tienld", "main: " + bitmap2);
 //            imgStack = stackImages(0.8, ([img, imgCanny, imgGray],
 //                                     [imgDil, imgContour, imgErode]))
 //            Utils.matToBitmap(img_contour, bitmap1);
