@@ -117,12 +117,12 @@ public class ConvertFile {
     }
 
 
-    public static void main(Bitmap bitmap) {
+    public static void main(Bitmap bitmap,Bitmap bitmap1) {
 
         //Reading the Image from the video
 //        VideoCapture capture = new VideoCapture();
 //        capture.open(0); cmamab abasd
-        Bitmap bitmap1 = Bitmap.createBitmap(bitmap);
+
         Mat frame = new Mat();
         Utils.bitmapToMat(bitmap, frame);
         Mat KERNEL1 = Mat.ones(8,8,CvType.CV_8U);
@@ -151,10 +151,12 @@ public class ConvertFile {
             Imgproc.dilate(canny_img, process_img, KERNEL1);
             Imgproc.erode(process_img, process_img, KERNEL2);
             get_contour(canny_img, img_contour);
+            Bitmap bitmap2 = Bitmap.createBitmap(640, 480, Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(img_contour, bitmap2);
 //            imgStack = stackImages(0.8, ([img, imgCanny, imgGray],
 //                                     [imgDil, imgContour, imgErode]))
-            Utils.matToBitmap(frame, bitmap1);
-            Log.e("tienld", "main: " + bitmap );
+//            Utils.matToBitmap(img_contour, bitmap1);
+//            Log.e("tienld", "main: " + bitmap );
         }
     }
 

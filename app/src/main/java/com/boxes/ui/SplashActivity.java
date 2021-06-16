@@ -28,6 +28,7 @@ public class SplashActivity extends AppCompatActivity {
     private BaseLoaderCallback mOpenCVCallBack = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
+            Log.e("tienld", "onManagerConnected: " +  status);
             switch (status) {
                 case LoaderCallbackInterface.SUCCESS:
                 {
@@ -46,15 +47,10 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        Bitmap icon = BitmapFactory.decodeResource(getResources(),
-                R.drawable.i011);
-        Log.i("tienld", "Trying to load OpenCV library");
-        if (OpenCVLoader.initDebug()) {
-            Log.e("tienld", "fail: ");
-        }else {
-            ConvertFile.main(icon);
-        }
-
+        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.i011);
+        Log.e("tienld", "Trying to load OpenCV library");
+        Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(), R.drawable.i011);
+        ConvertFile.main(icon,bitmap1);
     }
 
     @Override
