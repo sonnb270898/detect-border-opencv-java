@@ -47,7 +47,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.i074);
+        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.i056);
         Log.e("tienld", "Trying to load OpenCV library");
         ConvertFile.main(icon);
     }

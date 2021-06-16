@@ -117,6 +117,75 @@ public class ConvertFile {
         }
     }
 
+    public static void get_contour1(Mat img, Mat img_cotour){
+        //find contour
+        List<MatOfPoint> contours = new ArrayList<>();
+        Mat hierarchy = new Mat();
+        Imgproc.findContours(img, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        // draw contour
+//        Imgproc.drawContours(img_cotour, contours, -1, new Scalar(0,255,0), 2);
+//        Imgproc.circle(img_cotour, new Point(320, 240), 10, new Scalar(0, 0, 255), -1);
+
+        double a = (7.25 * 10637.37974683544 - Matrix[0][2]) / Matrix[0][0];
+        double b = (7.25 * 10637.37974683544 - Matrix[1][2]) / Matrix[1][1];
+
+        double maxVal = 0;
+        int maxValIdx = 0;
+        for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++)
+        {
+            double contourArea = Imgproc.contourArea(contours.get(contourIdx));
+//            double minArea = gettrackbar;
+            double minArea = 500;
+            if (contourArea < minArea) continue;
+
+            MatOfPoint2f approxContour2f = new MatOfPoint2f();
+            contours.get(contourIdx).convertTo(approxContour2f, CvType.CV_32FC2);
+            double peri = Imgproc.arcLength(approxContour2f, true);
+            Imgproc.approxPolyDP(approxContour2f, approxContour2f,0.02 * peri, true);
+//            MatOfPoint matOfPoint = new MatOfPoint();
+//            approxContour2f.convertTo(matOfPoint, CvType.CV_8UC2);
+//            Rect rect = Imgproc.boundingRect(matOfPoint);
+
+            Imgproc.drawContours(img_cotour, contours, contourIdx, new Scalar(255,0,0), 2);
+            //Imgproc.rectangle(img_cotour, new Point(rect.x, rect.y), new Point(rect.x+rect.width,rect.y+rect.height), new Scalar(255,0,0),2);
+
+            RotatedRect rotate_rect_boxes = Imgproc.minAreaRect(new MatOfPoint2f(contours.get(contourIdx).toArray()));
+
+            MatOfPoint rect_boxes = new MatOfPoint();
+//            rect_boxes = (MatOfPoint)result.get("contours");
+            Imgproc.boxPoints(rotate_rect_boxes, rect_boxes);
+
+            rect_boxes.convertTo(rect_boxes, CvType.CV_32S);
+            // get order_point
+            List<Point> order_point = orderPoint(rect_boxes.toList().subList(0,4));
+            rect_boxes.fromList(order_point);
+
+
+
+            Point tltr = mid_point(order_point.get(0), order_point.get(1));
+            Point blbr = mid_point(order_point.get(3), order_point.get(2));
+            Point tlbl = mid_point(order_point.get(0), order_point.get(3));
+            Point trbr = mid_point(order_point.get(1), order_point.get(2));
+
+            List<Point> tmp = new ArrayList<Point>();
+            tmp.add(tltr);
+            tmp.add(trbr);
+            tmp.add(blbr);
+            tmp.add(tlbl);
+
+            Size s = estimateSize(tmp);
+
+
+            double dr_W = s.width ;
+            double dr_H = s.height ;
+
+            Imgproc.putText(img_cotour, String.format("%.1f cm",dr_H), new Point(tltr.x, tltr.y - 20), Core.FONT_HERSHEY_SIMPLEX, .7,
+                    new Scalar (0, 255, 0), 2);
+            Imgproc.putText(img_cotour, String.format("%.1f cm",dr_W), new Point(tlbl.x - 20, tlbl.y), Core.FONT_HERSHEY_SIMPLEX, .7,
+                    new Scalar (0, 255, 0), 2);
+        }
+    }
+
 
     public static Bitmap main(Bitmap bitmap) {
 
@@ -153,7 +222,7 @@ public class ConvertFile {
             Mat process_img = new Mat();
             Imgproc.dilate(canny_img, process_img, KERNEL1);
             Imgproc.erode(process_img, process_img, KERNEL2);
-            get_contour(canny_img, img_contour);
+            get_contour1(canny_img, img_contour);
             Utils.matToBitmap(img_contour, bitmap2);
             Log.e("tienld", "main: " + bitmap2);
 //            imgStack = stackImages(0.8, ([img, imgCanny, imgGray],
