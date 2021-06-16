@@ -64,11 +64,11 @@ public class ConvertFile {
         Mat hierarchy = new Mat();
         Imgproc.findContours(img, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
         // draw contour
-        Imgproc.drawContours(img_cotour, contours, -1, new Scalar(0,0,255), 2);
+        Imgproc.drawContours(img_cotour, contours, -1, new Scalar(255,0,0), 3);
         //Imgproc.circle(img_cotour, new Point(320, 240), 10, new Scalar(0, 0, 255), -1);
 
-        double a = (7.25 * 10637.37974683544 - Matrix[0][2]) / Matrix[0][0];
-        double b = (7.25 * 10637.37974683544 - Matrix[1][2]) / Matrix[1][1];
+//        double a = (7.25 * 10637.37974683544 - Matrix[0][2]) / Matrix[0][0];
+//        double b = (7.25 * 10637.37974683544 - Matrix[1][2]) / Matrix[1][1];
 //        Imgproc.circle(img_cotour, new Point(320 - (int) a, 240 - (int) b), 10, new Scalar(0, 0, 255), -1);
 //        Imgproc.circle(img_cotour, new Point(320 + (int) a, 240 + (int) b), 10, new Scalar(0, 0, 255), -1);
 //        Imgproc.circle(img_cotour, new Point(320 - (int) a, 240 + (int) b), 10, new Scalar(0, 0, 255), -1);
@@ -95,6 +95,7 @@ public class ConvertFile {
             Imgproc.boxPoints(rotate_rect_boxes, rect_boxes);
 
             rect_boxes.convertTo(rect_boxes, CvType.CV_32S);
+
             // get order_point
             List<Point> order_point = orderPoint(rect_boxes.toList().subList(0,4));
             rect_boxes.fromList(order_point);
@@ -110,9 +111,9 @@ public class ConvertFile {
             double dr_H = s.height / 12068.5;
 
             Imgproc.putText(img_cotour, String.format("%.1f cm",dr_H), new Point(tltr.x, tltr.y - 20), Core.FONT_HERSHEY_SIMPLEX, .7,
-                    new Scalar (0, 0, 255), 2);
+                    new Scalar (255, 0, 0), 2);
             Imgproc.putText(img_cotour, String.format("%.1f cm",dr_W), new Point(tlbl.x - 20, tlbl.y), Core.FONT_HERSHEY_SIMPLEX, .7,
-                    new Scalar (0, 0, 255), 2);
+                    new Scalar (255, 0, 0), 2);
         }
     }
 
