@@ -167,7 +167,7 @@ public class ConvertFile {
             Point tlbl = mid_point(order_point.get(0), order_point.get(3));
             Point trbr = mid_point(order_point.get(1), order_point.get(2));
 
-            List<Point> tmp = new ArrayList<Point>();
+            List<Point> tmp = new ArrayList<>();
             tmp.add(tltr);
             tmp.add(trbr);
             tmp.add(blbr);
@@ -229,7 +229,9 @@ public class ConvertFile {
 //                                     [imgDil, imgContour, imgErode]))
 //            Utils.matToBitmap(img_contour, bitmap1);
 //            Log.e("tienld", "main: " + bitmap );
+            break;
         }
+        return bitmap2;
     }
 
 }

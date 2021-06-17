@@ -7,6 +7,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -42,14 +46,43 @@ public class SplashActivity extends AppCompatActivity {
             }
         }
     };
+    int[] arr = {
+            R.drawable.i011,
+            R.drawable.i025,
+            R.drawable.i037,
+            R.drawable.i056,
+            R.drawable.i064,
+            R.drawable.i074,
+            R.drawable.i089,
+            R.drawable.i093
+    };
+
+    int s = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.i056);
-        Log.e("tienld", "Trying to load OpenCV library");
-        ConvertFile.main(icon);
+
+        ImageView imageView = findViewById(R.id.imgTest);
+
+
+        EditText editText = findViewById(R.id.edtTest);
+         findViewById(R.id.btnTest).setOnClickListener(v -> {
+             int s = Integer.parseInt(editText.getText().toString());
+             if (s>arr.length){
+                 Toast.makeText(this, "FAILLLLLLLLLLL", Toast.LENGTH_SHORT).show();
+                 return;
+             }
+             Bitmap icon = BitmapFactory.decodeResource(getResources(), arr[s]);
+             Bitmap bitmap = ConvertFile.main(icon);
+             imageView.setImageBitmap(bitmap);
+             editText.setText("");
+         });
+
+
+
     }
 
     @Override
