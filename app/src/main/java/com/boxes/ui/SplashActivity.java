@@ -70,8 +70,13 @@ public class SplashActivity extends AppCompatActivity {
 
         EditText editText = findViewById(R.id.edtTest);
          findViewById(R.id.btnTest).setOnClickListener(v -> {
+             if (editText.getText().toString().isEmpty()){
+                 Toast.makeText(this, "FAILLLLLLLLLLL", Toast.LENGTH_SHORT).show();
+                 return;
+             }
              int s = Integer.parseInt(editText.getText().toString());
              if (s>arr.length){
+                 editText.setText("");
                  Toast.makeText(this, "FAILLLLLLLLLLL", Toast.LENGTH_SHORT).show();
                  return;
              }
