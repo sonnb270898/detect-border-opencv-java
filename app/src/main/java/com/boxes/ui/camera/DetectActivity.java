@@ -1,6 +1,7 @@
 package com.boxes.ui.camera;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.boxes.callback.IDataCallback;
 import com.boxes.service.BluetoothLeService;
 import com.boxes.service.MyHandler;
 import com.boxes.ui.R;
+import com.boxes.utils.ConvertFile;
 import com.boxes.uvc.bluetooth.BluetoothLeActivity;
 import com.serenegiant.usb.CameraDialog;
 import com.serenegiant.usb.IFrameCallback;
@@ -93,8 +95,8 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
     private List<Integer> listPointInRoi = new ArrayList<>();
     private Mat startFrame=null;
     private static final boolean USE_SURFACE_ENCODER = false;
-    private static final int PREVIEW_WIDTH = 1280; // 640 1280
-    private static final int PREVIEW_HEIGHT = 720; //480 720
+    private static final int PREVIEW_WIDTH = 640; // 640 1280
+    private static final int PREVIEW_HEIGHT = 480; //480 720
     private static final int PREVIEW_MODE = 0; // YUV
     private USBMonitor mUSBMonitor;
     private UVCCameraHandler mCameraHandler;
@@ -338,62 +340,125 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
             }
 
             bitmap = Bitmap.createBitmap(srcBitmap);
+
+            Mat frame1 = new Mat();
+            Utils.bitmapToMat(srcBitmap, frame1);
+            Mat KERNEL1 = Mat.ones(8,8,CvType.CV_8U);
+            Mat KERNEL2 = Mat.ones(5,5,CvType.CV_8U);
+            Mat KERNEL3 = Mat.ones(3,3,CvType.CV_8U);
+
+            Bitmap bgImg_bmp = BitmapFactory.decodeResource(getResources(), R.drawable.i093);
+            Mat bgImg_mat = new Mat();
+            Mat bgImg_mat_gray = new Mat();
+            Utils.bitmapToMat(bgImg_bmp, bgImg_mat);
+            bgImg_mat = ConvertFile.resizeImage(bgImg_mat, 640, 480);
+            Imgproc.cvtColor(bgImg_mat, bgImg_mat_gray, Imgproc.COLOR_RGBA2GRAY);
+            //blur image
+            Mat bgImg_blur = new Mat();
+            Imgproc.GaussianBlur(bgImg_mat_gray, bgImg_blur, new Size(7,7),0);
+//        BackgroundSubtractorMOG2 backSub;
+//        backSub = Video.createBackgroundSubtractorMOG2();
+//        Mat fgMask = new Mat();
+
+            while (true) {
+                // capture.read(frame);
+                frame1 = ConvertFile.resizeImage(frame1, 640, 480);
+                Mat img_contour = frame1.clone();
+                // convert to gray image
+                Mat gray_img = new Mat();
+                Imgproc.cvtColor(frame1, gray_img, Imgproc.COLOR_RGBA2GRAY);
+                Mat blur_img = new Mat();
+                Mat diffImg = new Mat();
+                Imgproc.GaussianBlur(gray_img, blur_img, new Size(7,7),0);
+                // backSub.apply(blur_img , fgMask,0.0);
+                Core.absdiff(bgImg_mat_gray, blur_img, diffImg);
+                Mat thresh = new Mat();
+                Imgproc.threshold(diffImg, thresh,0, 255,
+                        Imgproc.THRESH_BINARY_INV | Imgproc.THRESH_OTSU);
+
+//            Bitmap bitmap_tmp2 = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
+//            Utils.matToBitmap(thresh, bitmap_tmp2);
+//            Log.e("tienld", "main: " + bitmap_tmp2);
+
+                Imgproc.erode(thresh, thresh, KERNEL2);
+                Mat se = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(7, 7));
+                Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_CLOSE, se);
+
+                int threshold1 = 85;
+                int threshold2 = 255;
+                //get Canny
+                Mat canny_img = new Mat();
+                Imgproc.Canny(thresh, canny_img, threshold1, threshold2);
+                Imgproc.dilate(canny_img, canny_img, KERNEL2);
+                Imgproc.morphologyEx(canny_img, canny_img, Imgproc.MORPH_CLOSE, se);
+                Imgproc.morphologyEx(canny_img, canny_img, Imgproc.MORPH_CLOSE, se);
+                Imgproc.morphologyEx(canny_img, canny_img, Imgproc.MORPH_CLOSE, se);
+
+//                Bitmap bitmap_tmp2 = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
+//                Utils.matToBitmap(canny_img, bitmap_tmp2);
+//                Log.e("tienld", "main: " + bitmap_tmp2);
+                ConvertFile.get_contour(canny_img, img_contour);
+                Utils.matToBitmap(img_contour, bitmap);
+                Log.e("tienld", "main: " + bitmap);
+                break;
+            }
+
+
             //bitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.ARGB_8888);
 
-            Mat currentFrame = new Mat();
-            Mat crop_gray_img = new Mat();
-            Utils.bitmapToMat(srcBitmap, currentFrame);
+            //Mat currentFrame = new Mat();
+            //Mat crop_gray_img = new Mat();
+            //Utils.bitmapToMat(srcBitmap, currentFrame);
 
 
-            if (startFrame == null){
-                startFrame = crop_gray_img.clone();
-            }
-            Map<String, Object> result;
-            boolean motionFlag=false;
-            if(rectRoi != null) {
-
-                Mat crop_currentFrame = currentFrame.submat(rectRoi);
-                Imgproc.cvtColor(crop_currentFrame, crop_gray_img, Imgproc.COLOR_RGB2GRAY);
-
-                if (cropImgFlag) {
-                    Bitmap bmp = Bitmap.createBitmap(crop_currentFrame.cols(), crop_currentFrame.rows(), Bitmap.Config.ARGB_8888);
-                    Utils.matToBitmap(crop_currentFrame, bmp);
-                    mCropImageView.setImageBitmap(bmp);
-                    cropImgFlag = false;
-                }
-                result = detectObject(crop_gray_img, 100);
-
-                if ((boolean) result.get("has_Obj") && !motionFlag) {
-
-                    RotatedRect rotate_rect_boxes = Imgproc.minAreaRect(new MatOfPoint2f(((MatOfPoint) result.get("contours")).toArray()));
-
-                    MatOfPoint rect_boxes = new MatOfPoint();
-                    Imgproc.boxPoints(rotate_rect_boxes, rect_boxes);
-
-                    rect_boxes.convertTo(rect_boxes, CvType.CV_32S);
-                    // get order_point
-                    List<Point> order_point = orderPoint(rect_boxes.toList().subList(0, 4), rectRoi);
-                    rect_boxes.fromList(order_point);
-                    //estimate size
-                    Size s = estimateSize(order_point);
-                    Point mid_width = new Point((order_point.get(0).x + order_point.get(1).x) / 2 - 50, (order_point.get(0).y + order_point.get(1).y) / 2);
-                    Point mid_height = new Point((order_point.get(1).x + order_point.get(2).x) / 2, (order_point.get(1).y + order_point.get(2).y) / 2);
-
-                    objWidth.setText(Double.toString(Math.floor(s.width*0.1)));
-                    objHeight.setText(Double.toString(Math.floor(s.height*0.1)));
-
-                    Imgproc.line(currentFrame, order_point.get(0), order_point.get(1), new Scalar(0, 255, 0), 3);
-                    Imgproc.line(currentFrame, order_point.get(1), order_point.get(2), new Scalar(0, 255, 0), 3);
-                    Imgproc.line(currentFrame, order_point.get(2), order_point.get(3), new Scalar(0, 255, 0), 3);
-                    Imgproc.line(currentFrame, order_point.get(3), order_point.get(0), new Scalar(0, 255, 0), 3);
-
-
-                    Imgproc.putText(currentFrame, String.format("width %.1f cm", s.width * 0.1), mid_width, Core.FONT_HERSHEY_SIMPLEX, 0.65, new Scalar(0, 0, 255), 2);
-                    Imgproc.putText(currentFrame, String.format("height %.1f cm", s.height * 0.1), mid_height, Core.FONT_HERSHEY_SIMPLEX, 0.65, new Scalar(0, 0, 255), 2);
-                }
-            }
-            startFrame = crop_gray_img.clone();
-            Utils.matToBitmap(currentFrame, bitmap);
+//            if (startFrame == null){
+//                startFrame = crop_gray_img.clone();
+//            }
+//            Map<String, Object> result;
+//            boolean motionFlag=false;
+//            if(rectRoi != null) {
+//
+//                Mat crop_currentFrame = currentFrame.submat(rectRoi);
+//                Imgproc.cvtColor(crop_currentFrame, crop_gray_img, Imgproc.COLOR_RGB2GRAY);
+//
+//                if (cropImgFlag) {
+//                    Bitmap bmp = Bitmap.createBitmap(crop_currentFrame.cols(), crop_currentFrame.rows(), Bitmap.Config.ARGB_8888);
+//                    Utils.matToBitmap(crop_currentFrame, bmp);
+//                    mCropImageView.setImageBitmap(bmp);
+//                    cropImgFlag = false;
+//                }
+//                result = detectObject(crop_gray_img, 100);
+//
+//                if ((boolean) result.get("has_Obj") && !motionFlag) {
+//
+//                    RotatedRect rotate_rect_boxes = Imgproc.minAreaRect(new MatOfPoint2f(((MatOfPoint) result.get("contours")).toArray()));
+//
+//                    MatOfPoint rect_boxes = new MatOfPoint();
+//                    Imgproc.boxPoints(rotate_rect_boxes, rect_boxes);
+//
+//                    rect_boxes.convertTo(rect_boxes, CvType.CV_32S);
+//                    // get order_point
+//                    List<Point> order_point = orderPoint(rect_boxes.toList().subList(0, 4), rectRoi);
+//                    rect_boxes.fromList(order_point);
+//                    //estimate size
+//                    Size s = estimateSize(order_point);
+//                    Point mid_width = new Point((order_point.get(0).x + order_point.get(1).x) / 2 - 50, (order_point.get(0).y + order_point.get(1).y) / 2);
+//                    Point mid_height = new Point((order_point.get(1).x + order_point.get(2).x) / 2, (order_point.get(1).y + order_point.get(2).y) / 2);
+//
+//                    objWidth.setText(Double.toString(Math.floor(s.width*0.1)));
+//                    objHeight.setText(Double.toString(Math.floor(s.height*0.1)));
+//
+//                    Imgproc.line(currentFrame, order_point.get(0), order_point.get(1), new Scalar(0, 255, 0), 3);
+//                    Imgproc.line(currentFrame, order_point.get(1), order_point.get(2), new Scalar(0, 255, 0), 3);
+//                    Imgproc.line(currentFrame, order_point.get(2), order_point.get(3), new Scalar(0, 255, 0), 3);
+//                    Imgproc.line(currentFrame, order_point.get(3), order_point.get(0), new Scalar(0, 255, 0), 3);
+//
+//
+//                    Imgproc.putText(currentFrame, String.format("width %.1f cm", s.width * 0.1), mid_width, Core.FONT_HERSHEY_SIMPLEX, 0.65, new Scalar(0, 0, 255), 2);
+//                    Imgproc.putText(currentFrame, String.format("height %.1f cm", s.height * 0.1), mid_height, Core.FONT_HERSHEY_SIMPLEX, 0.65, new Scalar(0, 0, 255), 2);
+//                }
+//            }
+//            startFrame = crop_gray_img.clone();
             mImageView.post(mUpdateImageTask);
         }
     };

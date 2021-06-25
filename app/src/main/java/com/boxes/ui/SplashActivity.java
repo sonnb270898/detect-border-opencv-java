@@ -25,27 +25,10 @@ public class SplashActivity extends AppCompatActivity {
 
     private Handler mHandler;
     private final Runnable mRunnable = () -> {
-//        startActivity(new Intent(SplashActivity.this,MainActivity.class));
-//        finish();
+        startActivity(new Intent(SplashActivity.this,MainActivity.class));
+        finish();
     };
 
-    private BaseLoaderCallback mOpenCVCallBack = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            Log.e("tienld", "onManagerConnected: " +  status);
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                {
-                    Log.i("tienld", "OpenCV loaded successfully");
-                    // Create and set View
-                } break;
-                default:
-                {
-                    super.onManagerConnected(status);
-                } break;
-            }
-        }
-    };
     int[] arr = {
             R.drawable.i011,
             R.drawable.i025,
@@ -81,7 +64,7 @@ public class SplashActivity extends AppCompatActivity {
                  return;
              }
              Bitmap icon = BitmapFactory.decodeResource(getResources(), arr[s]);
-             Bitmap bitmap = ConvertFile.main(icon);
+             Bitmap bitmap = ConvertFile.main(this,icon);
              imageView.setImageBitmap(bitmap);
              editText.setText("");
          });

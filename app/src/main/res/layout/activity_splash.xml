@@ -8,7 +8,7 @@
     tools:context="com.boxes.ui.SplashActivity">
 
     <RelativeLayout
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -46,17 +46,20 @@
     </RelativeLayout>
 
     <EditText
+        android:visibility="gone"
         android:inputType="number"
         android:id="@+id/edtTest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <Button
+        android:visibility="gone"
         android:id="@+id/btnTest"
         android:layout_below="@id/edtTest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
     <ImageView
+        android:visibility="gone"
         android:id="@+id/imgTest"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
