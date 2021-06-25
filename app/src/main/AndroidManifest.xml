@@ -27,11 +27,11 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
         <activity android:name="com.boxes.ui.MainActivity"/>
-        <activity
-            android:name="com.boxes.ui.camera.DetectActivity" />
+<!--        <activity-->
+<!--            android:name="com.boxes.ui.camera.DetectActivity" />-->
 
         <activity
-            android:name="com.boxes.ui.SplashActivity">
+            android:name="com.boxes.ui.camera.DetectActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

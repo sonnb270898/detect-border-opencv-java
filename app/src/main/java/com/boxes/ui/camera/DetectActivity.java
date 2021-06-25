@@ -25,6 +25,7 @@ import com.boxes.service.MyHandler;
 import com.boxes.ui.R;
 import com.boxes.utils.ConvertFile;
 import com.boxes.uvc.bluetooth.BluetoothLeActivity;
+import com.serenegiant.common.BaseActivity;
 import com.serenegiant.usb.CameraDialog;
 import com.serenegiant.usb.IFrameCallback;
 import com.serenegiant.usb.USBMonitor;
@@ -63,7 +64,7 @@ import static com.boxes.utils.BoundDetection.detectObject;
 import static com.boxes.utils.BoundDetection.estimateSize;
 import static com.boxes.utils.BoundDetection.orderPoint;
 
-public final class DetectActivity extends BluetoothLeActivity implements CameraDialog.CameraDialogParent , IDataCallback{
+public final class DetectActivity extends BaseActivity implements CameraDialog.CameraDialogParent , IDataCallback{
 
     @BindView(R.id.imageButton)
     ImageButton mCameraButton;
@@ -95,8 +96,8 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
     private List<Integer> listPointInRoi = new ArrayList<>();
     private Mat startFrame=null;
     private static final boolean USE_SURFACE_ENCODER = false;
-    private static final int PREVIEW_WIDTH = 640; // 640 1280
-    private static final int PREVIEW_HEIGHT = 480; //480 720
+    private static final int PREVIEW_WIDTH = 1280; // 640 1280
+    private static final int PREVIEW_HEIGHT = 720; //480 720
     private static final int PREVIEW_MODE = 0; // YUV
     private USBMonitor mUSBMonitor;
     private UVCCameraHandler mCameraHandler;
@@ -351,7 +352,7 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
             Mat bgImg_mat = new Mat();
             Mat bgImg_mat_gray = new Mat();
             Utils.bitmapToMat(bgImg_bmp, bgImg_mat);
-            bgImg_mat = ConvertFile.resizeImage(bgImg_mat, 640, 480);
+            bgImg_mat = ConvertFile.resizeImage(bgImg_mat, PREVIEW_WIDTH, PREVIEW_HEIGHT);
             Imgproc.cvtColor(bgImg_mat, bgImg_mat_gray, Imgproc.COLOR_RGBA2GRAY);
             //blur image
             Mat bgImg_blur = new Mat();
@@ -362,7 +363,7 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
 
             while (true) {
                 // capture.read(frame);
-                frame1 = ConvertFile.resizeImage(frame1, 640, 480);
+                frame1 = ConvertFile.resizeImage(frame1, PREVIEW_WIDTH, PREVIEW_HEIGHT);
                 Mat img_contour = frame1.clone();
                 // convert to gray image
                 Mat gray_img = new Mat();
@@ -476,25 +477,25 @@ public final class DetectActivity extends BluetoothLeActivity implements CameraD
         objDepth.setText(data);
     }
 
-    @Override
-    public void getData(String var1, String var2, String var3, String var4) {
-        tvWeight.setText(String.format("%s%s", var1, var4));
-    }
-
-    @Override
-    public void getConnectionState(String var1, boolean var2) {
-
-    }
-
-    @Override
-    public void getConnectionInfo(String var1, String var2) {
-
-    }
-
-    @Override
-    public void getBluetoothLeService(BluetoothLeService var1) {
-
-    }
+//    @Override
+//    public void getData(String var1, String var2, String var3, String var4) {
+//        tvWeight.setText(String.format("%s%s", var1, var4));
+//    }
+//
+//    @Override
+//    public void getConnectionState(String var1, boolean var2) {
+//
+//    }
+//
+//    @Override
+//    public void getConnectionInfo(String var1, String var2) {
+//
+//    }
+//
+//    @Override
+//    public void getBluetoothLeService(BluetoothLeService var1) {
+//
+//    }
 
     @OnClick({R.id.obj_height,R.id.button_call_disconnect,R.id.selectRoi,R.id.imageButton,R.id.tvSettingCam,R.id.tvSettingHeight})
     public void onClick(View v) {
