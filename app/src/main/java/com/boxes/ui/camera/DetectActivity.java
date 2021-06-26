@@ -113,6 +113,7 @@ public final class DetectActivity extends BaseActivity implements CameraDialog.C
     private int heightImgView;
     private int widthImgView;
     private static boolean cropImgFlag;
+    private int a = 0;
     private int startX, startY;
     private Bitmap bitmap = null;
     private final Bitmap srcBitmap = Bitmap.createBitmap(PREVIEW_WIDTH, PREVIEW_HEIGHT, Bitmap.Config.RGB_565);
