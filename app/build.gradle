@@ -10,9 +10,9 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        ndk {
-            abiFilters "armeabi-v7a"
-        }
+//        ndk {
+//            abiFilters "armeabi-v7a"
+//        }
 
     }
     buildTypes {
@@ -36,6 +36,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'org.jetbrains:annotations:15.0'
+    implementation project(path: ':sdk')
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
@@ -44,7 +45,7 @@ dependencies {
     implementation 'com.github.felHR85:UsbSerial:6.1.0'
 
 
-    implementation(name: 'openCVLibrary', ext: 'aar')
+    //implementation(name: 'openCVLibrary', ext: 'aar')
     implementation(name: 'libuvccamera', ext: 'aar')
     implementation(name: 'posprinterconnectandsendsdk', ext: 'jar')
     implementation(name: 'usbCameraCommon', ext: 'aar')
@@ -54,5 +55,7 @@ dependencies {
     implementation 'com.github.tbruyelle:rxpermissions:0.12'
     implementation 'com.jakewharton:butterknife:10.2.3'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
+
+//    implementation 'com.quickbirdstudios:opencv:4.3.0'
 
 }

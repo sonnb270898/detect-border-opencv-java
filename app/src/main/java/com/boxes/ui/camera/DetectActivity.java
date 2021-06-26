@@ -49,6 +49,10 @@ import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.video.BackgroundSubtractor;
+import org.opencv.video.Video;
+import org.opencv.videoio.VideoCapture;
+import org.opencv.videoio.Videoio;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -97,7 +101,7 @@ public final class DetectActivity extends BaseActivity implements CameraDialog.C
     private Mat startFrame=null;
     private static final boolean USE_SURFACE_ENCODER = false;
     private static final int PREVIEW_WIDTH = 1280; // 640 1280
-    private static final int PREVIEW_HEIGHT = 720; //480 720
+    private static final int PREVIEW_HEIGHT = 720; //360 720
     private static final int PREVIEW_MODE = 0; // YUV
     private USBMonitor mUSBMonitor;
     private UVCCameraHandler mCameraHandler;
@@ -321,7 +325,6 @@ public final class DetectActivity extends BaseActivity implements CameraDialog.C
         }
     };
 
-
     private final IFrameCallback mIFrameCallback = new IFrameCallback() {
         @Override
         public void onFrame(final ByteBuffer frame) {
@@ -344,61 +347,84 @@ public final class DetectActivity extends BaseActivity implements CameraDialog.C
 
             Mat frame1 = new Mat();
             Utils.bitmapToMat(srcBitmap, frame1);
-            Mat KERNEL1 = Mat.ones(8,8,CvType.CV_8U);
-            Mat KERNEL2 = Mat.ones(5,5,CvType.CV_8U);
-            Mat KERNEL3 = Mat.ones(3,3,CvType.CV_8U);
+            int KERNEL_SIZE1 = 8;
+            int KERNEL_SIZE2 = 5;
+            int KERNEL_SIZE3 = 3;
 
-            Bitmap bgImg_bmp = BitmapFactory.decodeResource(getResources(), R.drawable.i093);
-            Mat bgImg_mat = new Mat();
-            Mat bgImg_mat_gray = new Mat();
-            Utils.bitmapToMat(bgImg_bmp, bgImg_mat);
-            bgImg_mat = ConvertFile.resizeImage(bgImg_mat, PREVIEW_WIDTH, PREVIEW_HEIGHT);
-            Imgproc.cvtColor(bgImg_mat, bgImg_mat_gray, Imgproc.COLOR_RGBA2GRAY);
-            //blur image
-            Mat bgImg_blur = new Mat();
-            Imgproc.GaussianBlur(bgImg_mat_gray, bgImg_blur, new Size(7,7),0);
-//        BackgroundSubtractorMOG2 backSub;
-//        backSub = Video.createBackgroundSubtractorMOG2();
-//        Mat fgMask = new Mat();
+//            Bitmap bgImg_bmp = BitmapFactory.decodeResource(getResources(), R.drawable.i093);
+//            Mat bgImg_mat = new Mat();
+//            Mat bgImg_mat_gray = new Mat();
+//            Utils.bitmapToMat(bgImg_bmp, bgImg_mat);
+//            bgImg_mat = ConvertFile.resizeImage(bgImg_mat, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+//            Imgproc.cvtColor(bgImg_mat, bgImg_mat_gray, Imgproc.COLOR_RGBA2GRAY);
+//            //blur image
+//            Mat bgImg_blur = new Mat();
+//            Imgproc.GaussianBlur(bgImg_mat_gray, bgImg_blur, new Size(7,7),0);
+
+            BackgroundSubtractor backSub;
+            backSub = Video.createBackgroundSubtractorMOG2();
+            Mat fgMask = new Mat();
+
 
             while (true) {
                 // capture.read(frame);
-                frame1 = ConvertFile.resizeImage(frame1, PREVIEW_WIDTH, PREVIEW_HEIGHT);
-                Mat img_contour = frame1.clone();
+                Mat frame2 = new Mat();
+                Size scaleSize = new Size(PREVIEW_WIDTH,PREVIEW_HEIGHT);
+                Imgproc.resize(frame1, frame2, scaleSize, 0, 0, Imgproc.INTER_CUBIC);
+//                backSub.apply(frame2 , fgMask);
+//                Mat fgMask1 = new Mat();
+//                Imgproc.resize(fgMask, fgMask1, scaleSize, 0, 0, Imgproc.INTER_CUBIC);
+//                Imgproc.threshold(fgMask1, fgMask1,127, 255,
+//                        Imgproc.THRESH_BINARY);
+
+//                Bitmap bitmap_tmp2 = Bitmap.createBitmap(PREVIEW_WIDTH, PREVIEW_HEIGHT, Bitmap.Config.ARGB_8888);
+//                Utils.matToBitmap(fgMask, bitmap_tmp2);
+//                Log.e("tienld", "main: " + bitmap_tmp2);
+
+                Mat img_contour = frame2.clone();
                 // convert to gray image
                 Mat gray_img = new Mat();
-                Imgproc.cvtColor(frame1, gray_img, Imgproc.COLOR_RGBA2GRAY);
                 Mat blur_img = new Mat();
-                Mat diffImg = new Mat();
-                Imgproc.GaussianBlur(gray_img, blur_img, new Size(7,7),0);
-                // backSub.apply(blur_img , fgMask,0.0);
-                Core.absdiff(bgImg_mat_gray, blur_img, diffImg);
-                Mat thresh = new Mat();
-                Imgproc.threshold(diffImg, thresh,0, 255,
-                        Imgproc.THRESH_BINARY_INV | Imgproc.THRESH_OTSU);
+                Imgproc.GaussianBlur(frame2, blur_img, new Size(7,7),1);
+                Imgproc.cvtColor(blur_img, gray_img, Imgproc.COLOR_BGR2GRAY);
 
-//            Bitmap bitmap_tmp2 = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
-//            Utils.matToBitmap(thresh, bitmap_tmp2);
-//            Log.e("tienld", "main: " + bitmap_tmp2);
-
-                Imgproc.erode(thresh, thresh, KERNEL2);
-                Mat se = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(7, 7));
-                Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_CLOSE, se);
-
-                int threshold1 = 85;
+                //Imgproc.medianBlur(gray_img, blur_img, 7);
+                //Core.absdiff(bgImg_mat_gray, blur_img, diffImg);
+                Mat cannyImg = new Mat();
+//                Imgproc.threshold(blur_img, thresh,75, 255,
+//                        Imgproc.THRESH_BINARY_INV | Imgproc.THRESH_OTSU);
+                int threshold1 = 25;
                 int threshold2 = 255;
-                //get Canny
-                Mat canny_img = new Mat();
-                Imgproc.Canny(thresh, canny_img, threshold1, threshold2);
-                Imgproc.dilate(canny_img, canny_img, KERNEL2);
-                Imgproc.morphologyEx(canny_img, canny_img, Imgproc.MORPH_CLOSE, se);
-                Imgproc.morphologyEx(canny_img, canny_img, Imgproc.MORPH_CLOSE, se);
-                Imgproc.morphologyEx(canny_img, canny_img, Imgproc.MORPH_CLOSE, se);
+                Imgproc.Canny(gray_img, cannyImg, threshold1, threshold2);
+//                Imgproc.adaptiveThreshold(blur_img, thresh, 75, Imgproc.ADAPTIVE_THRESH_MEAN_C,
+//                        Imgproc.THRESH_BINARY, 11, 12);
+                Mat dilated = new Mat();
+                Mat eroded = new Mat();
+                Mat opening = new Mat();
+                Mat closing = new Mat();
+
+                Mat element1 = Imgproc.getStructuringElement(Imgproc.CV_SHAPE_ELLIPSE,
+                        new Size(2 * KERNEL_SIZE1 + 1, 2 * KERNEL_SIZE1 + 1),
+                        new Point(KERNEL_SIZE1, KERNEL_SIZE1));
+                Mat element2 = Imgproc.getStructuringElement(Imgproc.CV_SHAPE_ELLIPSE,
+                        new Size(2 * KERNEL_SIZE2 + 1, 2 * KERNEL_SIZE2 + 1),
+                        new Point(KERNEL_SIZE2, KERNEL_SIZE2));
+
+                Mat element3 = Imgproc.getStructuringElement(Imgproc.CV_SHAPE_ELLIPSE,
+                        new Size(2 * KERNEL_SIZE3 + 1, 2 * KERNEL_SIZE3 + 1),
+                        new Point(KERNEL_SIZE3, KERNEL_SIZE3));
+
+                Imgproc.dilate(cannyImg, dilated, element1);
+                Imgproc.erode(dilated, eroded, element2);
+
+                Imgproc.morphologyEx(eroded, opening,  Imgproc.MORPH_OPEN, element3);
+                Imgproc.morphologyEx(opening, closing,  Imgproc.MORPH_CLOSE, element3);
 
 //                Bitmap bitmap_tmp2 = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
-//                Utils.matToBitmap(canny_img, bitmap_tmp2);
+//                Utils.matToBitmap(cannyImg, bitmap_tmp2);
 //                Log.e("tienld", "main: " + bitmap_tmp2);
-                ConvertFile.get_contour(canny_img, img_contour);
+
+                ConvertFile.get_contour(closing, img_contour);
                 Utils.matToBitmap(img_contour, bitmap);
                 Log.e("tienld", "main: " + bitmap);
                 break;

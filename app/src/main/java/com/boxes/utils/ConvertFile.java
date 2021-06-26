@@ -69,11 +69,9 @@ public class ConvertFile {
         Mat hierarchy = new Mat();
         Imgproc.findContours(img, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-
-
-        //        for (MatOfPoint contour: contours)
+        //for (MatOfPoint contour: contours)
 //            Imgproc.fillPoly(dest, Arrays.asList(contour), new Scalar(255, 255, 255));
-        //Imgproc.drawContours(dest, contours, -1, new Scalar(0, 0, 255), 5);
+
 //        Scalar green = new Scalar(81, 190, 0);
 //        for (MatOfPoint contour: contours) {
 //            RotatedRect rotatedRect = Imgproc.minAreaRect(new MatOfPoint2f(contour.toArray()));
@@ -86,11 +84,13 @@ public class ConvertFile {
 //            MatOfPoint points = new MatOfPoint(vertices);
 //            Imgproc.drawContours(image, Arrays.asList(points), -1, color, thickness);
 //        }
+
         double maxVal = -1;
         int maxValIdx = -1;
         double minArea = 2000;
         for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++)
         {
+            //Imgproc.drawContours(img_cotour, contours, contourIdx, new Scalar(0,0,255), 1);
             double contourArea = Imgproc.contourArea(contours.get(contourIdx));
 
             if (contourArea < minArea) continue;
@@ -141,9 +141,9 @@ public class ConvertFile {
             double dr_W = s.width ;
             double dr_H = s.height ;
 
-            Imgproc.putText(img_cotour, String.format("%.1f cm",dr_H), new Point(tltr.x, tltr.y - 20), Core.FONT_HERSHEY_SIMPLEX, .7,
+            Imgproc.putText(img_cotour, String.format("%.1f cm",dr_H), new Point(tltr.x, tltr.y - 20), Imgproc.FONT_HERSHEY_SIMPLEX, .7,
                     new Scalar (0, 255, 0), 2);
-            Imgproc.putText(img_cotour, String.format("%.1f cm",dr_W), new Point(tlbl.x - 20, tlbl.y), Core.FONT_HERSHEY_SIMPLEX, .7,
+            Imgproc.putText(img_cotour, String.format("%.1f cm",dr_W), new Point(tlbl.x - 20, tlbl.y), Imgproc.FONT_HERSHEY_SIMPLEX, .7,
                     new Scalar (0, 255, 0), 2);
         }
     }

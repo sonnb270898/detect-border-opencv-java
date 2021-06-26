@@ -1,0 +1,166 @@
+{
+  "abi": "X86",
+  "info": {
+    "abi": "X86",
+    "bitness": 32,
+    "deprecated": false,
+    "default": true
+  },
+  "cxxBuildFolder": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/.cxx/cmake/debug/x86",
+  "soFolder": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/build/intermediates/cmake/debug/obj/x86",
+  "abiPlatformVersion": 21,
+  "cmake": {
+    "effectiveConfiguration": {
+      "inheritEnvironments": [],
+      "variables": []
+    }
+  },
+  "variant": {
+    "buildSystemArgumentList": [],
+    "cFlagsList": [],
+    "cppFlagsList": [],
+    "variantName": "debug",
+    "soFolder": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/build/intermediates/cmake/debug/obj",
+    "cxxBuildFolder": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/.cxx/cmake/debug",
+    "intermediatesFolder": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/build/intermediates/cmake/debug",
+    "isDebuggableEnabled": true,
+    "validAbiList": [
+      "ARMEABI_V7A",
+      "ARM64_V8A",
+      "X86",
+      "X86_64"
+    ],
+    "buildTargetSet": [],
+    "implicitBuildTargetSet": [],
+    "cmakeSettingsConfiguration": "android-gradle-plugin-predetermined-name",
+    "module": {
+      "cxxFolder": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/.cxx",
+      "intermediatesFolder": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/build/intermediates",
+      "gradleModulePathName": ":app",
+      "moduleRootFolder": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app",
+      "moduleBuildFile": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/build.gradle",
+      "makeFile": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/src/main/cpp",
+      "buildSystem": "CMAKE",
+      "ndkFolder": "/Users/mac/Library/Android/sdk/ndk/21.3.6528147",
+      "ndkVersion": "21.3.6528147",
+      "ndkSupportedAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "ndkDefaultAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "ndkDefaultStl": "LIBCXX_STATIC",
+      "ndkMetaPlatforms": {
+        "min": 16,
+        "max": 30,
+        "aliases": {
+          "20": 19,
+          "25": 24,
+          "J": 16,
+          "J-MR1": 17,
+          "J-MR2": 18,
+          "K": 19,
+          "L": 21,
+          "L-MR1": 22,
+          "M": 23,
+          "N": 24,
+          "N-MR1": 24,
+          "O": 26,
+          "O-MR1": 27,
+          "P": 28,
+          "Q": 29,
+          "R": 30
+        }
+      },
+      "ndkMetaAbiList": [
+        {
+          "abi": "ARMEABI_V7A",
+          "bitness": 32,
+          "deprecated": false,
+          "default": true
+        },
+        {
+          "abi": "ARM64_V8A",
+          "bitness": 64,
+          "deprecated": false,
+          "default": true
+        },
+        {
+          "abi": "X86",
+          "bitness": 32,
+          "deprecated": false,
+          "default": true
+        },
+        {
+          "abi": "X86_64",
+          "bitness": 64,
+          "deprecated": false,
+          "default": true
+        }
+      ],
+      "cmakeToolchainFile": "/Users/mac/Library/Android/sdk/ndk/21.3.6528147/build/cmake/android.toolchain.cmake",
+      "cmake": {
+        "isValidCmakeAvailable": true,
+        "cmakeExe": "/Users/mac/Library/Android/sdk/cmake/3.18.1/bin/cmake",
+        "minimumCmakeVersion": "3.18.1",
+        "ninjaExe": "/Users/mac/Library/Android/sdk/cmake/3.18.1/bin/ninja",
+        "isPreferCmakeFileApiEnabled": true
+      },
+      "stlSharedObjectMap": {
+        "LIBCXX_SHARED": {
+          "ARMEABI_V7A": "/Users/mac/Library/Android/sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/arm-linux-androideabi/libc++_shared.so",
+          "ARM64_V8A": "/Users/mac/Library/Android/sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so",
+          "X86": "/Users/mac/Library/Android/sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/i686-linux-android/libc++_shared.so",
+          "X86_64": "/Users/mac/Library/Android/sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/libc++_shared.so"
+        },
+        "LIBCXX_STATIC": {},
+        "NONE": {},
+        "SYSTEM": {}
+      },
+      "project": {
+        "rootBuildGradleFolder": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java",
+        "sdkFolder": "/Users/mac/Library/Android/sdk",
+        "isBuildOnlyTargetAbiEnabled": true,
+        "isCmakeBuildCohabitationEnabled": false,
+        "isConfigurationFoldingEnabled": false,
+        "isPrefabEnabled": false
+      }
+    },
+    "prefabClassPathFileCollection": [],
+    "prefabPackageDirectoryListFileCollection": [],
+    "stlType": "c++_static",
+    "optimizationTag": "Debug"
+  },
+  "buildSettings": {
+    "environmentVariables": []
+  },
+  "prefabFolder": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/.cxx/cmake/debug/prefab/x86",
+  "isActiveAbi": true,
+  "fullConfigurationHash": "4k3l4s1v214t3r2g6bw1u4b2b525f1f1ef3d736n6d4a2952i6wjf2i5i2k",
+  "configurationArguments": [
+    "-H/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/src/main",
+    "-DCMAKE_SYSTEM_NAME\u003dAndroid",
+    "-DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON",
+    "-DCMAKE_SYSTEM_VERSION\u003d21",
+    "-DANDROID_PLATFORM\u003dandroid-21",
+    "-DANDROID_ABI\u003dx86",
+    "-DCMAKE_ANDROID_ARCH_ABI\u003dx86",
+    "-DANDROID_NDK\u003d/Users/mac/Library/Android/sdk/ndk/21.3.6528147",
+    "-DCMAKE_ANDROID_NDK\u003d/Users/mac/Library/Android/sdk/ndk/21.3.6528147",
+    "-DCMAKE_TOOLCHAIN_FILE\u003d/Users/mac/Library/Android/sdk/ndk/21.3.6528147/build/cmake/android.toolchain.cmake",
+    "-DCMAKE_MAKE_PROGRAM\u003d/Users/mac/Library/Android/sdk/cmake/3.18.1/bin/ninja",
+    "-DCMAKE_C_FLAGS\u003d",
+    "-DCMAKE_CXX_FLAGS\u003d",
+    "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003d/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/build/intermediates/cmake/debug/obj/x86",
+    "-DCMAKE_RUNTIME_OUTPUT_DIRECTORY\u003d/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/build/intermediates/cmake/debug/obj/x86",
+    "-DCMAKE_BUILD_TYPE\u003dDebug",
+    "-B/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/.cxx/cmake/debug/x86",
+    "-GNinja"
+  ]
+}

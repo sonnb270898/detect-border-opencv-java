@@ -1,0 +1,62 @@
+[
+  {
+    "level": "INFO",
+    "message": "Start JSON generation. Platform version: 21 min SDK version: x86",
+    "file": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/src/main/cpp",
+    "tag": "debug|x86"
+  },
+  {
+    "level": "INFO",
+    "message": "rebuilding JSON /Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/.cxx/cmake/debug/x86/android_gradle_build.json due to:",
+    "file": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/src/main/cpp",
+    "tag": "debug|x86"
+  },
+  {
+    "level": "INFO",
+    "message": "- expected json /Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/.cxx/cmake/debug/x86/android_gradle_build.json file is not present, will remove stale json folder",
+    "file": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/src/main/cpp",
+    "tag": "debug|x86"
+  },
+  {
+    "level": "INFO",
+    "message": "- missing previous command file /Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/.cxx/cmake/debug/x86/build_command.txt, will remove stale json folder",
+    "file": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/src/main/cpp",
+    "tag": "debug|x86"
+  },
+  {
+    "level": "INFO",
+    "message": "- command changed from previous, will remove stale json folder",
+    "file": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/src/main/cpp",
+    "tag": "debug|x86"
+  },
+  {
+    "level": "INFO",
+    "message": "removing stale contents from \u0027/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/.cxx/cmake/debug/x86\u0027",
+    "file": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/src/main/cpp",
+    "tag": "debug|x86"
+  },
+  {
+    "level": "INFO",
+    "message": "created folder \u0027/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/.cxx/cmake/debug/x86\u0027",
+    "file": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/src/main/cpp",
+    "tag": "debug|x86"
+  },
+  {
+    "level": "INFO",
+    "message": "executing cmake Executable : /Users/mac/Library/Android/sdk/cmake/3.18.1/bin/cmake\narguments : \n-H/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/src/main\n-DCMAKE_SYSTEM_NAME\u003dAndroid\n-DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON\n-DCMAKE_SYSTEM_VERSION\u003d21\n-DANDROID_PLATFORM\u003dandroid-21\n-DANDROID_ABI\u003dx86\n-DCMAKE_ANDROID_ARCH_ABI\u003dx86\n-DANDROID_NDK\u003d/Users/mac/Library/Android/sdk/ndk/21.3.6528147\n-DCMAKE_ANDROID_NDK\u003d/Users/mac/Library/Android/sdk/ndk/21.3.6528147\n-DCMAKE_TOOLCHAIN_FILE\u003d/Users/mac/Library/Android/sdk/ndk/21.3.6528147/build/cmake/android.toolchain.cmake\n-DCMAKE_MAKE_PROGRAM\u003d/Users/mac/Library/Android/sdk/cmake/3.18.1/bin/ninja\n-DCMAKE_C_FLAGS\u003d\n-DCMAKE_CXX_FLAGS\u003d\n-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003d/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/build/intermediates/cmake/debug/obj/x86\n-DCMAKE_RUNTIME_OUTPUT_DIRECTORY\u003d/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/build/intermediates/cmake/debug/obj/x86\n-DCMAKE_BUILD_TYPE\u003dDebug\n-B/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/.cxx/cmake/debug/x86\n-GNinja\njvmArgs : \n\n",
+    "file": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/src/main/cpp",
+    "tag": "debug|x86"
+  },
+  {
+    "level": "INFO",
+    "message": "Executable : /Users/mac/Library/Android/sdk/cmake/3.18.1/bin/cmake\narguments : \n-H/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/src/main\n-DCMAKE_SYSTEM_NAME\u003dAndroid\n-DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON\n-DCMAKE_SYSTEM_VERSION\u003d21\n-DANDROID_PLATFORM\u003dandroid-21\n-DANDROID_ABI\u003dx86\n-DCMAKE_ANDROID_ARCH_ABI\u003dx86\n-DANDROID_NDK\u003d/Users/mac/Library/Android/sdk/ndk/21.3.6528147\n-DCMAKE_ANDROID_NDK\u003d/Users/mac/Library/Android/sdk/ndk/21.3.6528147\n-DCMAKE_TOOLCHAIN_FILE\u003d/Users/mac/Library/Android/sdk/ndk/21.3.6528147/build/cmake/android.toolchain.cmake\n-DCMAKE_MAKE_PROGRAM\u003d/Users/mac/Library/Android/sdk/cmake/3.18.1/bin/ninja\n-DCMAKE_C_FLAGS\u003d\n-DCMAKE_CXX_FLAGS\u003d\n-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003d/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/build/intermediates/cmake/debug/obj/x86\n-DCMAKE_RUNTIME_OUTPUT_DIRECTORY\u003d/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/build/intermediates/cmake/debug/obj/x86\n-DCMAKE_BUILD_TYPE\u003dDebug\n-B/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/.cxx/cmake/debug/x86\n-GNinja\njvmArgs : \n\n",
+    "file": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/src/main/cpp",
+    "tag": "debug|x86"
+  },
+  {
+    "level": "INFO",
+    "message": "JSON generation completed with problem. Exception: Build command failed.\nError while executing process /Users/mac/Library/Android/sdk/cmake/3.18.1/bin/cmake with arguments {-H/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/src/main -DCMAKE_SYSTEM_NAME\u003dAndroid -DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON -DCMAKE_SYSTEM_VERSION\u003d21 -DANDROID_PLATFORM\u003dandroid-21 -DANDROID_ABI\u003dx86 -DCMAKE_ANDROID_ARCH_ABI\u003dx86 -DANDROID_NDK\u003d/Users/mac/Library/Android/sdk/ndk/21.3.6528147 -DCMAKE_ANDROID_NDK\u003d/Users/mac/Library/Android/sdk/ndk/21.3.6528147 -DCMAKE_TOOLCHAIN_FILE\u003d/Users/mac/Library/Android/sdk/ndk/21.3.6528147/build/cmake/android.toolchain.cmake -DCMAKE_MAKE_PROGRAM\u003d/Users/mac/Library/Android/sdk/cmake/3.18.1/bin/ninja -DCMAKE_C_FLAGS\u003d -DCMAKE_CXX_FLAGS\u003d -DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003d/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/build/intermediates/cmake/debug/obj/x86 -DCMAKE_RUNTIME_OUTPUT_DIRECTORY\u003d/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/build/intermediates/cmake/debug/obj/x86 -DCMAKE_BUILD_TYPE\u003dDebug -B/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/.cxx/cmake/debug/x86 -GNinja}\n\nCMake Error: The source directory \"/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/src/main\" does not appear to contain CMakeLists.txt.\nSpecify --help for usage, or press the help button on the CMake GUI.\n",
+    "file": "/Users/mac/Desktop/Flutter Project/detect-border-opencv-java/app/src/main/cpp",
+    "tag": "debug|x86"
+  }
+]
