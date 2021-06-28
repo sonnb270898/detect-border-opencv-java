@@ -1,0 +1,37 @@
+{
+  "buildFiles": [
+    "/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/libcxx_helper/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/mac/Library/Android/sdk/cmake/3.18.1/bin/ninja",
+      "-C",
+      "/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/.cxx/cmake/debug/x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/mac/Library/Android/sdk/cmake/3.18.1/bin/ninja",
+    "-C",
+    "/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/.cxx/cmake/debug/x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "opencv_jni_shared::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86_64",
+      "artifactName": "opencv_jni_shared",
+      "output": "/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/.cxx/cmake/debug/x86_64/libopencv_jni_shared.a"
+    }
+  },
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/Users/mac/Library/Android/sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang",
+      "cppCompilerExecutable": "/Users/mac/Library/Android/sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}

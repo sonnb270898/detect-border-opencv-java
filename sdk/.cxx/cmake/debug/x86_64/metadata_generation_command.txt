@@ -1,0 +1,23 @@
+Executable : /Users/mac/Library/Android/sdk/cmake/3.18.1/bin/cmake
+arguments : 
+-H/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/libcxx_helper
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_SYSTEM_VERSION=21
+-DANDROID_PLATFORM=android-21
+-DANDROID_ABI=x86_64
+-DCMAKE_ANDROID_ARCH_ABI=x86_64
+-DANDROID_NDK=/Users/mac/Library/Android/sdk/ndk/21.3.6528147
+-DCMAKE_ANDROID_NDK=/Users/mac/Library/Android/sdk/ndk/21.3.6528147
+-DCMAKE_TOOLCHAIN_FILE=/Users/mac/Library/Android/sdk/ndk/21.3.6528147/build/cmake/android.toolchain.cmake
+-DCMAKE_MAKE_PROGRAM=/Users/mac/Library/Android/sdk/cmake/3.18.1/bin/ninja
+-DCMAKE_C_FLAGS=
+-DCMAKE_CXX_FLAGS=
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/build/intermediates/cmake/debug/obj/x86_64
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/build/intermediates/cmake/debug/obj/x86_64
+-DCMAKE_BUILD_TYPE=Debug
+-B/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/.cxx/cmake/debug/x86_64
+-GNinja
+-DANDROID_STL=c++_shared
+jvmArgs : 
+

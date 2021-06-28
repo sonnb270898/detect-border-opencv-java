@@ -1,0 +1,20 @@
+[
+  {
+    "level": "INFO",
+    "message": "Start JSON generation. Platform version: 21 min SDK version: x86",
+    "file": "/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/libcxx_helper/CMakeLists.txt",
+    "tag": "debug|x86"
+  },
+  {
+    "level": "INFO",
+    "message": "JSON \u0027/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/.cxx/cmake/debug/x86/android_gradle_build.json\u0027 was up-to-date",
+    "file": "/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/libcxx_helper/CMakeLists.txt",
+    "tag": "debug|x86"
+  },
+  {
+    "level": "INFO",
+    "message": "JSON generation completed without problems",
+    "file": "/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/libcxx_helper/CMakeLists.txt",
+    "tag": "debug|x86"
+  }
+]

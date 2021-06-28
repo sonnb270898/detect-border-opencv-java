@@ -1,0 +1,20 @@
+[
+  {
+    "level": "INFO",
+    "message": "Start JSON generation. Platform version: 21 min SDK version: arm64-v8a",
+    "file": "/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/libcxx_helper/CMakeLists.txt",
+    "tag": "debug|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "JSON \u0027/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/.cxx/cmake/debug/arm64-v8a/android_gradle_build.json\u0027 was up-to-date",
+    "file": "/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/libcxx_helper/CMakeLists.txt",
+    "tag": "debug|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "JSON generation completed without problems",
+    "file": "/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/libcxx_helper/CMakeLists.txt",
+    "tag": "debug|arm64-v8a"
+  }
+]

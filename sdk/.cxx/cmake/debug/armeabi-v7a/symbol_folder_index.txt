@@ -1,0 +1,1 @@
+/Users/mac/Desktop/Viettel Post/BOXI/detect-border-opencv-java/sdk/build/intermediates/cmake/debug/obj/armeabi-v7a
